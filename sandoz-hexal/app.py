@@ -9,12 +9,17 @@ import dash_bootstrap_components as dbc
 
 from components import footer, navbar
 
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = 'secrets.json'
 
 app = dash.Dash(__name__,
                 external_stylesheets=[dbc.themes.BOOTSTRAP],
                 meta_tags=[{'name': 'viewport',
-                            'content': 'width=device-width, initial-scale=1.0'}]
-                # use_pages=True
+                            'content': 'width=device-width, initial-scale=1.0'}],
+                use_pages=True
                  )
 server = app.server
 
@@ -24,16 +29,7 @@ server = app.server
 # App layout
 app.layout = html.Div([
     navbar,
-    dbc.Container([
-        html.Br(),
-        html.H1('Engagement'),
-        html.Br(),
-        html.H1('Conversion'),
-        html.Br(),
-        html.H1('Teleclinic Conv.'),
-        # dash.page_container,
-        html.Br(),
-    ]),
+    dash.page_container,
     footer
 ], style={'background': '#f8fcfb'})
 
