@@ -19,7 +19,7 @@ from web_sections import main_sec1
 dash.register_page(
     __name__,
     path='/',
-    title='Vital Signs'
+    title='Sandox Hexal - DocMorris Analytics'
 ) # Home page
 
 layout = html.Div([
@@ -53,6 +53,13 @@ layout = html.Div([
             ],class_name='grid_box')
         ]),
         html.Br(),
+        dbc.Row([
+            dbc.Col([
+                html.P('Evolution of activity'),
+                dcc.Graph(id='ga_evolution_chart',figure={})
+            ],class_name='grid_box')
+        ]),
+        html.Br(),
         html.H1('Conversion'),
         html.Br(),
         html.H1('Teleclinic Conv.'),
@@ -64,6 +71,7 @@ layout = html.Div([
     Output('ga_sessions', 'figure'),
     Output('ga_visits', 'figure'),
     Output('ga_unique_users', 'figure'),
+    Output('ga_evolution_chart', 'figure'),
 
     Input('my-date-picker-range', 'start_date'),
     Input('my-date-picker-range', 'end_date'))
@@ -71,5 +79,5 @@ def update_graph(start_date,end_date):
 
     el1 = main_sec1.update_main_sec1(start_date,end_date)
     
-    return el1[0],el1[1],el1[2]
+    return el1[0],el1[1],el1[2],el1[3]
 
