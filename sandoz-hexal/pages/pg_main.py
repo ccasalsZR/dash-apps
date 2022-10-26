@@ -69,9 +69,6 @@ layout = html.Div([
     Input('my-date-picker-range', 'end_date'))
 def update_graph(start_date,end_date):
 
-    print(start_date)
-    print(end_date)
-
     el1 = main_sec1.update_main_sec1(start_date,end_date)
     
     return el1[0],el1[1],el1[2]
