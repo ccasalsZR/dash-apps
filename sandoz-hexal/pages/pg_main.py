@@ -13,7 +13,7 @@ import pandas as pd
 from datetime import date
 
 
-from web_sections import main_sec1
+from web_sections import main_sec1, main_sec2
 
 
 dash.register_page(
@@ -25,6 +25,7 @@ dash.register_page(
 layout = html.Div([
     html.Br(),
     dbc.Container([
+        # ENGAGEMENT SECTION --------------------------------------------------------------
         dbc.Row([
             dbc.Col([
                 html.H1('Engagement'),
@@ -64,7 +65,6 @@ layout = html.Div([
                 ),
             ],class_name='grid_box')
         ]),
-        html.Br(),
         dbc.Row([
             dbc.Col([
                 html.P('Evolution of activity'),
@@ -76,8 +76,36 @@ layout = html.Div([
             ],class_name='grid_box')
         ]),
         html.Br(),
+        # CONVERSION --------------------------------------------------------------------
         html.H1('Conversion'),
+        dbc.Row([
+            dbc.Col([
+                html.P('Clickouts to TC'),
+                dcc.Loading(
+                    id='loading-5',
+                    children=[dcc.Graph(id='conversion-kpi-1',figure={})],
+                    type='dot',color='#22594C'
+                ), 
+            ],class_name='grid_box'),
+            dbc.Col([
+                html.P('Clickouts to "116117"'),
+                dcc.Loading(
+                    id='loading-6',
+                    children=[dcc.Graph(id='conversion-kpi-2',figure={})],
+                    type='dot',color='#22594C'
+                ), 
+            ],class_name='grid_box'),
+            dbc.Col([
+                html.P('Questionnaire'),
+                dcc.Loading(
+                    id='loading-7',
+                    children=[dcc.Graph(id='conversion-kpi-3',figure={})],
+                    type='dot',color='#22594C'
+                ), 
+            ],class_name='grid_box'),
+        ]),
         html.Br(),
+        # TELECLINIC CONVERSION ---------------------------------------------------------
         html.H1('Teleclinic Conv.'),
     ]),
     html.Br()
@@ -89,11 +117,19 @@ layout = html.Div([
     Output('ga_unique_users', 'figure'),
     Output('ga_evolution_chart', 'figure'),
 
+    Output('conversion-kpi-1', 'figure'),
+    Output('conversion-kpi-2', 'figure'),
+    Output('conversion-kpi-3', 'figure'),
+
     Input('my-date-picker-range', 'start_date'),
     Input('my-date-picker-range', 'end_date'))
 def update_graph(start_date,end_date):
 
-    el1 = main_sec1.update_main_sec1(start_date,end_date)
+    engagement = main_sec1.update_main_sec1(start_date,end_date)
+    conversion = main_sec2.update_main_sec2()
+
     
-    return el1[0],el1[1],el1[2],el1[3]
+    return [engagement[0],engagement[1],engagement[2],engagement[3],
+        conversion[0],conversion[1],conversion[2]
+    ]
 
