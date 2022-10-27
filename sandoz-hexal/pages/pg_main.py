@@ -40,23 +40,39 @@ layout = html.Div([
         dbc.Row([
             dbc.Col([
                 html.P('Sessions'),
-                dcc.Graph(id='ga_sessions',figure={})
+                dcc.Loading(
+                    id='loading-1',
+                    children=[dcc.Graph(id='ga_sessions',figure={})],
+                    type='dot',color='#22594C'
+                ), 
             ],class_name='grid_box'),
             
             dbc.Col([
                 html.P('New Users'),
-                dcc.Graph(id='ga_visits',figure={})
+                dcc.Loading(
+                    id='loading-2',
+                    children=[dcc.Graph(id='ga_visits',figure={})],
+                    type='dot',color='#22594C'
+                ),
             ],class_name='grid_box'),
             dbc.Col([
                 html.P('Active Users'),
-                dcc.Graph(id='ga_unique_users',figure={})
+                dcc.Loading(
+                    id='loading-3',
+                    children=[dcc.Graph(id='ga_unique_users',figure={})],
+                    type='dot',color='#22594C'
+                ),
             ],class_name='grid_box')
         ]),
         html.Br(),
         dbc.Row([
             dbc.Col([
                 html.P('Evolution of activity'),
-                dcc.Graph(id='ga_evolution_chart',figure={})
+                dcc.Loading(
+                    id='loading-4',
+                    children=[dcc.Graph(id='ga_evolution_chart',figure={})],
+                    type='dot',color='#22594C'
+                ),
             ],class_name='grid_box')
         ]),
         html.Br(),

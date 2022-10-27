@@ -14,3 +14,7 @@
     margin-left: 1.5px;
     margin-right: 1.5px;
 }
+
+.loading_render {
+    color: #C3900E !important;
+}
