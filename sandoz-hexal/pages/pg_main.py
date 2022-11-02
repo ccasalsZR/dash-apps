@@ -13,7 +13,7 @@ import pandas as pd
 from datetime import date
 
 
-from web_sections import main_sec1, main_sec2
+from web_sections import main_sec1, main_sec2, main_sec4
 
 
 dash.register_page(
@@ -107,6 +107,56 @@ layout = html.Div([
         html.Br(),
         # TELECLINIC CONVERSION ---------------------------------------------------------
         html.H1('Teleclinic Conv.'),
+        
+        html.Br(),
+        # MARKETING CAMPAING ------------------------------------------------------------
+        html.H1("Marketing Campaign"),
+        dbc.Row([
+            dbc.Col([
+                html.P('Spend'),
+                dcc.Loading(
+                    id='loading-6',
+                    children=[dcc.Graph(id='spend-1',figure={})],
+                    type='dot',color='#22594C'
+                ), 
+            ],class_name='grid_box'),
+            dbc.Col([
+                html.P('CPM'),
+                dcc.Loading(
+                    id='loading-7',
+                    children=[dcc.Graph(id='cpm-1',figure={})],
+                    type='dot',color='#22594C'
+                ), 
+                html.P('Impressions'),
+                dcc.Loading(
+                    id='loading-8',
+                    children=[dcc.Graph(id='impressions-1',figure={})],
+                    type='dot',color='#22594C'
+                ), 
+            ],class_name='grid_box'),
+            dbc.Col([
+                html.P('CTR'),
+                dcc.Loading(
+                    id='loading-9',
+                    children=[dcc.Graph(id='ctr-1',figure={})],
+                    type='dot',color='#22594C'
+                ), 
+            ],class_name='grid_box'),
+            dbc.Col([
+                html.P('Cost per Click'),
+                dcc.Loading(
+                    id='loading-10',
+                    children=[dcc.Graph(id='cost_per_click-1',figure={})],
+                    type='dot',color='#22594C'
+                ), 
+                html.P('Clicks'),
+                dcc.Loading(
+                    id='loading-11',
+                    children=[dcc.Graph(id='clicks-1',figure={})],
+                    type='dot',color='#22594C'
+                ), 
+            ],class_name='grid_box'),
+        ]),
     ]),
     html.Br()
 ])
@@ -121,6 +171,14 @@ layout = html.Div([
     Output('conversion-kpi-2', 'figure'),
     Output('conversion-kpi-3', 'figure'),
 
+    # MARKETING CAMPAING ------------------------------------------------------------
+    Output('spend-1', 'figure'),
+    Output('cpm-1', 'figure'),
+    Output('impressions-1', 'figure'),
+    Output('ctr-1', 'figure'),
+    Output('cost_per_click-1', 'figure'),
+    Output('clicks-1', 'figure'),
+
     Input('my-date-picker-range', 'start_date'),
     Input('my-date-picker-range', 'end_date'))
 def update_graph(start_date,end_date):
@@ -128,8 +186,11 @@ def update_graph(start_date,end_date):
     engagement = main_sec1.update_main_sec1(start_date,end_date)
     conversion = main_sec2.update_main_sec2()
 
+    marketing = main_sec4.get_marketing_data(start_date,end_date)
+
     
     return [engagement[0],engagement[1],engagement[2],engagement[3],
-        conversion[0],conversion[1],conversion[2]
+        conversion[0],conversion[1],conversion[2],
+        marketing[0],marketing[1],marketing[2],marketing[3],marketing[4],marketing[5]
     ]
 
