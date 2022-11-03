@@ -5,6 +5,8 @@ import plotly.graph_objects as go
 
 import pandas as pd
 
+import datetime
+
 from google.analytics.data_v1beta import BetaAnalyticsDataClient
 from google.analytics.data_v1beta.types import DateRange
 from google.analytics.data_v1beta.types import Dimension
@@ -28,12 +30,16 @@ def update_main_sec1(start_date,end_date):
     client = BetaAnalyticsDataClient()
     property_id = '283963042'
 
+    # Documentation for Dims and Metrics:
+    # https://developers.google.com/analytics/devguides/reporting/data/v1/api-schema
     request = RunReportRequest(
         property=f"properties/{property_id}",
         dimensions=[Dimension(name="date")],
         metrics=[Metric(name="sessions"),
             Metric(name="newUsers"),
-            Metric(name="activeUsers") # distinct users
+            Metric(name="activeUsers"), # distinct users
+            Metric(name='screenPageViews'), # The number of app screens or web pages your users viewed
+            Metric(name='averageSessionDuration'), # The average duration (in seconds) of users' sessions.
             ],
         date_ranges=[DateRange(start_date=start_date, end_date=end_date)],
     )
@@ -45,13 +51,17 @@ def update_main_sec1(start_date,end_date):
             "Sessions": row.metric_values[0].value,
             "New Users": row.metric_values[1].value,
             "Active Users": row.metric_values[2].value,
+            "Page Views": row.metric_values[3].value,
+            "Avg. Session Duration": row.metric_values[4].value,
         })
     df = pd.DataFrame(output)
 
     # Casting the metrics from the API call
     df = df.astype({'Sessions':'int',
         'New Users':'int',
-        'Active Users':'int'
+        'Active Users':'int',
+        'Page Views':'int',
+        'Avg. Session Duration':'float32',
     })
 
     # sort dataframe
@@ -95,6 +105,30 @@ def update_main_sec1(start_date,end_date):
         height=100,
     )
 
+    fig4 = go.Figure(go.Indicator(
+        mode="number",
+        value=df['Page Views'].sum(),
+        domain={"x": [0, 1], "y": [0, 1]},
+        number={
+            "font": {"size": 50, 'color': '#22594c'},
+        },
+    ))
+    fig4.update_layout(
+        height=100,
+    )
+
+    fig5 = go.Figure(go.Indicator(
+        mode="number",
+        value=df['Avg. Session Duration'].mean(), # datetime.timedelta(seconds=df['Avg. Session Duration'].sum()),
+        domain={"x": [0, 1], "y": [0, 1]},
+        number={
+            "font": {"size": 50, 'color': '#22594c'},
+        },
+    ))
+    fig5.update_layout(
+        height=100,
+    )
+
     # Line chart for the evolution of the metrics above
 
     fig_line1 = px.line(
@@ -118,58 +152,6 @@ def update_main_sec1(start_date,end_date):
     #     margin=dict(l=10, r=10, t=20, b=0)
     )
 
-    return [fig1,fig2,fig3,fig_line1]
+    return [fig1,fig2,fig3,fig4,fig5,fig_line1]
 
 
-def get_file_download(start_date,end_date):
-
-    # """Runs a simple report on a Google Analytics 4 property."""
-    # Using a default constructor instructs the client to use the credentials
-    # specified in GOOGLE_APPLICATION_CREDENTIALS environment variable.
-    client = BetaAnalyticsDataClient()
-    property_id = '283963042'
-
-    request = RunReportRequest(
-        property=f"properties/{property_id}",
-        dimensions=[Dimension(name="fileName")],
-        metrics=[Metric(name="eventCount")
-            ],
-        date_ranges=[DateRange(start_date=start_date, end_date=end_date)],
-        dimension_filter=FilterExpression(
-            filter=Filter(
-                field_name="fileExtension",
-                string_filter=Filter.StringFilter(value="pdf"),
-            )
-        ),
-    )
-    response = client.run_report(request)
-
-    output = []
-    for row in response.rows:
-        output.append({"fileName": row.dimension_values[0].value,
-            "eventCount": row.metric_values[0].value,
-        })
-    df = pd.DataFrame(output)
-
-    # Casting the metrics from the API call
-    df = df.astype({'fileName':'string',
-        'eventCount':'int'
-    })
-
-    df = df[(df['fileName'] != '') & (df['fileName'] != '(other)')]
-
-    fig1 = go.Figure(go.Indicator(
-        mode="number",
-        value=df['eventCount'].sum(),
-        domain={"x": [0, 1], "y": [0, 1]},
-        number={
-            "font": {"size": 50, 'color': '#22594c'},
-        },
-    ))
-    fig1.update_layout(
-        height=100,
-    )
-
-    # return 
-
-get_file_download('2022-10-01','2022-10-10')
