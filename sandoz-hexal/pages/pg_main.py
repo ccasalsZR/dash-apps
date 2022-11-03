@@ -13,7 +13,7 @@ import pandas as pd
 from datetime import date
 
 
-from web_sections import main_sec1, main_sec2, main_sec4
+from web_sections import main_1_engagement, main_2_conversion, main_4_marketing
 
 
 dash.register_page(
@@ -33,8 +33,8 @@ layout = html.Div([
             dbc.Col([
                  dcc.DatePickerRange(
                     id='my-date-picker-range',
-                    start_date=date(2022, 10, 1),
-                    end_date=date(2022, 10, 26)
+                    start_date=date(date.today().year, date.today().month, 1),
+                    end_date=date.today()
                 ),
             ], style= {'display':'flex', 'align-items':'right'}, className= 'flex-row-reverse')
         ]),
@@ -183,10 +183,10 @@ layout = html.Div([
     Input('my-date-picker-range', 'end_date'))
 def update_graph(start_date,end_date):
 
-    engagement = main_sec1.update_main_sec1(start_date,end_date)
-    conversion = main_sec2.update_main_sec2()
+    engagement = main_1_engagement.update_main_sec1(start_date,end_date)
+    conversion = main_2_conversion.update_main_sec2()
 
-    marketing = main_sec4.get_marketing_data(start_date,end_date)
+    marketing = main_4_marketing.get_marketing_data(start_date,end_date)
 
     
     return [engagement[0],engagement[1],engagement[2],engagement[3],
