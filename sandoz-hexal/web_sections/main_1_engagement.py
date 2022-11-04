@@ -152,6 +152,25 @@ def update_main_sec1(start_date,end_date):
     #     margin=dict(l=10, r=10, t=20, b=0)
     )
 
-    return [fig1,fig2,fig3,fig4,fig5,fig_line1]
+    df_donut = df.copy()
+    # df_donut = df_donut[['Sessions','Active Users']].sum()
+    df_donut = df[['Active Users','New Users']]
+    df_donut['Repeat Users'] = df_donut['Active Users'] - df_donut['New Users']
+    df_donut.drop(columns=['Active Users'],inplace=True)
+
+    df_donut = df_donut.sum(axis=0)
+
+
+    fig_donut = px.pie(
+        values=df_donut,
+        names=['New Users','Repeat Users'],
+        color_discrete_sequence = ['#38947F', '#90D5C5'],
+        hole = .5
+    )
+    fig_donut.update_layout(
+        legend=dict(orientation='h', yanchor='bottom', y=-0.5, xanchor='left', x=0, title=None),
+    )
+
+    return [fig1,fig2,fig3,fig4,fig5,fig_line1,fig_donut]
 
 

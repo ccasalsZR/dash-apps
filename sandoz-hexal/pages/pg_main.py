@@ -19,7 +19,7 @@ from web_sections import main_1_engagement, main_2_conversion, main_3_teleclinic
 dash.register_page(
     __name__,
     path='/',
-    title='Sandox Hexal - DocMorris Analytics'
+    title='Sandoz Hexal - DocMorris Analytics'
 ) # Home page
 
 
@@ -91,6 +91,14 @@ layout = html.Div([
                 dcc.Loading(
                     id='loading-4',
                     children=[dcc.Graph(id='ga_evolution_chart',figure={})],
+                    type='dot',color='#22594C'
+                ),
+            ],class_name='grid_box',width=8),
+            dbc.Col([
+                html.P('Share of users'),
+                dcc.Loading(
+                    id='loading-41',
+                    children=[dcc.Graph(id='ga_users_donut',figure={})],
                     type='dot',color='#22594C'
                 ),
             ],class_name='grid_box')
@@ -214,6 +222,8 @@ layout = html.Div([
     Output('page_views-1', 'figure'),    
     Output('avg_session_duration-1', 'figure'),    
     Output('ga_evolution_chart', 'figure'),
+    Output('ga_users_donut', 'figure'),
+    
 
     Output('conversion-kpi-1', 'figure'),
     Output('conversion-kpi-2', 'figure'),
@@ -244,7 +254,7 @@ def update_graph(start_date,end_date):
     marketing = main_4_marketing.get_marketing_data(start_date,end_date)
 
     
-    return [engagement[0],engagement[1],engagement[2],engagement[3],engagement[4],engagement[5],
+    return [engagement[0],engagement[1],engagement[2],engagement[3],engagement[4],engagement[5],engagement[6],
         conversion[0],conversion[1],conversion[2],
         teleclinic[0],teleclinic[1],teleclinic[2],
         marketing[0],marketing[1],marketing[2],marketing[3],marketing[4],marketing[5]

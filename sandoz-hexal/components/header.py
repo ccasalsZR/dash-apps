@@ -16,6 +16,7 @@ navbar = dbc.Navbar(
                         className="g-0",
                     ),
                     style={"textDecoration": "none"},
+                    href='/'
                 )
             ]),
             html.Img(src='.\static\icon\sandoz-seeklogo.com.svg', style={'width':'15%'})
