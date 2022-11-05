@@ -33,13 +33,22 @@ layout = html.Div([
         dbc.Row([
             dbc.Col([
                 html.H1('Engagement'),
-            ]) ,           
+            ]) ,         
+            # dbc.Col([
+                
+            # ]) ,
             dbc.Col([
                  dcc.DatePickerRange(
                     id='my-date-picker-range',
                     start_date=date(date.today().year, date.today().month-1, date.today().day),
                     end_date=date.today() + timedelta(days=-1)
                 ),
+                dcc.Dropdown(
+                    id='my-multi-dropdown-campaign',
+                    options=['ED', 'Thyroids'],
+                    value=['ED', 'Thyroids'],
+                    multi=True
+                , style= {'hight':'200px', 'width':'300px','margin-right':'10px'}),
             ], style= {'display':'flex', 'align-items':'right'}, className= 'flex-row-reverse')
         ]),
         dbc.Row([
@@ -243,13 +252,17 @@ layout = html.Div([
     Output('clicks-1', 'figure'),
 
     Input('my-date-picker-range', 'start_date'),
-    Input('my-date-picker-range', 'end_date'))
-def update_graph(start_date,end_date):
+    Input('my-date-picker-range', 'end_date'),
+    Input('my-multi-dropdown-campaign', 'value')
+    
+    )
+
+def update_graph(start_date,end_date,value):
 
     engagement = main_1_engagement.update_main_sec1(start_date,end_date)
     conversion = main_2_conversion.update_main_sec2()
 
-    teleclinic = main_3_teleclinic.get_teleclinic_ga_insigts(start_date,end_date)
+    teleclinic = main_3_teleclinic.get_teleclinic_ga_insigts(start_date,end_date,value)
 
     marketing = main_4_marketing.get_marketing_data(start_date,end_date)
 

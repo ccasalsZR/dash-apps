@@ -69,10 +69,20 @@ def run_snowflake_queries(start_date,end_date):
 
 
 
-def get_teleclinic_ga_insigts(start_date,end_date):
+def get_teleclinic_ga_insigts(start_date,end_date,campaign_selected):
 
 
-    df = run_snowflake_queries(start_date,end_date)
+    # df = run_snowflake_queries(start_date,end_date)
+
+    if 'Thyroids' in campaign_selected:
+        df = run_snowflake_queries(start_date,end_date)
+    else:
+        df = pd.DataFrame({
+            'sessions': [0], 
+            'users': [0], 
+            'new_users': [0], 
+        })
+    
 
     # print(df.head(10))
     # print(df.dtypes)
