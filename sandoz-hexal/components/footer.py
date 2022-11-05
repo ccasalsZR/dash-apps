@@ -21,6 +21,7 @@ footer = html.Div([
         ],className = 'd-flex justify-content-center'),
         dbc.Col([
             html.P("© " + str(date.today().year), style={'color': '#90D5C5', 'font-size': 'small'})
-        ],className = 'd-flex justify-content-center'),
+        ],
+        className = 'd-flex justify-content-center'),        
     ])
-],style={'background': '#22594c', 'height': '100px', 'padding-left': '5px', 'justify':'center'})
+],style={'background': '#22594c'})   
