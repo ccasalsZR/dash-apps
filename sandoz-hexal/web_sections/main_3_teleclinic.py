@@ -69,7 +69,7 @@ def get_teleclinic_ga_insigts(start_date,end_date,campaign_selected):
         },
     ))
     fig1.update_layout(
-        height=150,
+        height=120,
     )
 
     fig2 = go.Figure(go.Indicator(
@@ -81,7 +81,7 @@ def get_teleclinic_ga_insigts(start_date,end_date,campaign_selected):
         },
     ))
     fig2.update_layout(
-        height=150,
+        height=120,
     )
 
     fig3 = go.Figure(go.Indicator(
@@ -93,7 +93,7 @@ def get_teleclinic_ga_insigts(start_date,end_date,campaign_selected):
         },
     ))
     fig3.update_layout(
-        height=150,
+        height=120,
     )
 
     return [fig1,fig2,fig3]

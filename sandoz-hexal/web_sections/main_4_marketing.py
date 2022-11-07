@@ -6,6 +6,7 @@ from facebook_business.api import FacebookAdsApi
 from facebook_business.adobjects.adaccount import AdAccount
 
 import pandas as pd
+import json
 
 import os
 from dotenv import load_dotenv
@@ -44,6 +45,7 @@ def get_marketing_data(start_date,end_date):
         'ctr', # The percentage of times people saw your ad and performed a click (all).
         'clicks', # The number of clicks on your ads.
         'impressions',
+        # 'outbound_clicks', #The number of clicks on links that take people off Facebook-owned properties.
     ]
 
     # print(fields)
@@ -56,6 +58,7 @@ def get_marketing_data(start_date,end_date):
 
     df = pd.DataFrame(rawdata)
 
+    
     # Cast the extract
     df = df.astype({
         'clicks':'int',
@@ -84,7 +87,7 @@ def get_marketing_data(start_date,end_date):
     # CPM ---------------------------------------------------------------------
     fig2 = go.Figure(go.Indicator(
         mode="number",
-        value=df['cpm'].sum(),
+        value=df['spend'].sum()/(df['impressions'].sum()/1000),
         domain={"x": [0, 1], "y": [0, 1]},
         number={
             "font": {"size": 50, 'color': '#22594c'}, 
@@ -113,7 +116,7 @@ def get_marketing_data(start_date,end_date):
     # CTR ---------------------------------------------------------------------
     fig4 = go.Figure(go.Indicator(
         mode="number",
-        value=df['ctr'].sum(),
+        value=df['clicks'].sum()/df['impressions'].sum()*100,
         domain={"x": [0, 1], "y": [0, 1]},
         number={
             "font": {"size": 50, 'color': '#22594c'},
@@ -133,7 +136,7 @@ def get_marketing_data(start_date,end_date):
         number={
             "font": {"size": 50, 'color': '#22594c'},
             'valueformat':',.2f',
-            'suffix':'€'
+            'suffix':'€'    
         },
     ))
     fig5.update_layout(

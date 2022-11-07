@@ -92,7 +92,7 @@ layout = html.Div([
                     children=[dcc.Graph(id='avg_session_duration-1',figure={})],
                     type='dot',color='#22594C'
                 ),
-            ],class_name='grid_box')
+            ],class_name='grid_box'),
         ]),
         dbc.Row([
             dbc.Col([
