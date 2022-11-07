@@ -3,14 +3,19 @@ import warnings
 warnings.filterwarnings("ignore")
 
 import dash
-# import dash_auth
+import dash_auth
 from dash import html, dcc # dash-html
 import dash_bootstrap_components as dbc
 
 from components import footer, navbar
 
+import json
+
 import os
 from dotenv import load_dotenv
+
+# Keep this out of source code repository - save in a file or a database
+VALID_USERNAME_PASSWORD_PAIRS = json.loads(open('user_access.json', 'r').read())
 
 load_dotenv()
 os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = 'secrets.json'
@@ -19,10 +24,14 @@ app = dash.Dash(__name__,
                 external_stylesheets=[dbc.themes.BOOTSTRAP],
                 meta_tags=[{'name': 'viewport',
                             'content': 'width=device-width, initial-scale=1.0'}],
-                use_pages=True
+                use_pages=True,
                  )
 server = app.server
 
+auth = dash_auth.BasicAuth(
+    app,
+    VALID_USERNAME_PASSWORD_PAIRS
+)
 
 
 # ------------------------------------------------------------------------------

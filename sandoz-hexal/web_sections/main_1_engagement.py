@@ -123,6 +123,7 @@ def update_main_sec1(start_date,end_date):
         domain={"x": [0, 1], "y": [0, 1]},
         number={
             "font": {"size": 50, 'color': '#22594c'},
+            'suffix':'s',
         },
     ))
     fig5.update_layout(
@@ -172,5 +173,8 @@ def update_main_sec1(start_date,end_date):
     )
 
     return [fig1,fig2,fig3,fig4,fig5,fig_line1,fig_donut]
+
+
+
 
 
