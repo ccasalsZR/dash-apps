@@ -11,13 +11,16 @@ navbar = dbc.Navbar(
                     # Use row and col to control vertical alignment of logo / brand
                     dbc.Row(
                         [
-                            html.Img(src='.\static\icon\Group_logo_green.svg', style={'width':'10%'} )
+                            html.Img(src='.\static\icon\Group_logo_green.svg', style={'width':'80%'} )
                         ],
                         className="g-0",
                     ),
                     style={"textDecoration": "none"},
                     href='/'
                 )
+            ], width=1),
+            dbc.Col([
+                html.H1('Investors relations',className='h1-report-title')
             ])            
         ]
     ),

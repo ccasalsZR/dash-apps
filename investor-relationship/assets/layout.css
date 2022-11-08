@@ -1,0 +1,21 @@
+.h1-report-title {
+    font-family: Georgia, 'Times New Roman', Times, serif;
+}
+
+.h3-sub {
+    font-family: Georgia, 'Times New Roman', Times, serif;
+}
+
+.grid_box {
+    background-color: white ;
+    border-style: solid;
+    border-width: 1px ;
+    border-radius: 6px;
+    border-color: #ededed;
+    margin: 1.5px
+}
+
+.dash-spreadsheet-inner * {
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    font-size: small;
+}
