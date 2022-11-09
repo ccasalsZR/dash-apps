@@ -134,14 +134,16 @@ layout = html.Div([
                         data=[],
                         columns=[
                             dict(id = 'income_statement', name = ''),
-                            # dict(id = 'actual_month', name = 'Actual', type='numeric', format=Format(precision=1, scheme=Scheme.fixed)),
-                            # dict(id = 'forecast_month', name = 'Forecast', type='numeric', format=Format(precision=1, scheme=Scheme.fixed)),
-                            # dict(id = 'budget_month', name = 'Budget', type='numeric', format=Format(precision=1, scheme=Scheme.fixed)),
-                            # dict(id = 'prev_year_month', name = 'Prev. Year', type='numeric', format=Format(precision=1, scheme=Scheme.fixed)),
                             dict(id = 'actual_month', name = 'Actual'),
                             dict(id = 'forecast_month', name = 'Forecast'),
+                            dict(id = 'delta_actual_forecast', name = 'Δ'),
+                            dict(id = 'delta%_actual_forecast', name = 'Δ(%)'),
                             dict(id = 'budget_month', name = 'Budget'),
-                            dict(id = 'prev_year_month', name = 'Prev. Year'),
+                            dict(id = 'delta_actual_budget', name = 'Δ'),
+                            dict(id = 'delta%_actual_budget', name = 'Δ(%)'),
+                            dict(id = 'prev_year_month', name = 'Prev. Year'),                            
+                            dict(id = 'delta_actual_prev_year', name = 'Δ'),
+                            dict(id = 'delta%_actual_prev_year', name = 'Δ(%)'),
                         ],
                         style_as_list_view=True,
                         style_cell={'padding': '8px'},
@@ -151,10 +153,10 @@ layout = html.Div([
                             'borderBottom':'1.5px solid'
                         },
                         style_data_conditional=[
-                            {
-                                'if': {'row_index': 'even'},
-                                'backgroundColor': 'rgb(240, 240, 240)',
-                            },
+                            # {
+                            #     'if': {'row_index': 'even'},
+                            #     'backgroundColor': 'rgb(240, 240, 240)',
+                            # },
                             {
                                 'if': {
                                     'state': 'active'  # 'active' | 'selected'
@@ -168,25 +170,34 @@ layout = html.Div([
                                 },
                                 'borderBottom':'2px solid #38947F'
                             },
+                            {
+                                'if': {
+                                    'column_id': 'actual_month'
+                                },
+                                'backgroundColor': 'rgba(56, 148, 127,0.17)',
+                            },
+                            {
+                                'if': {
+                                    'column_id': ['delta_actual_forecast','delta%_actual_forecast','delta_actual_budget','delta%_actual_budget','delta_actual_prev_year','delta%_actual_prev_year']
+                                },
+                                'backgroundColor': 'rgb(245, 245, 245)',
+                            },  
                         ],
                         style_cell_conditional=[
                             {
-                                'if': {'column_id': c},
+                                'if': {
+                                    'column_id': 'income_statement'
+                                },
                                 'textAlign': 'left',
-                                'marginRight':'10px',                              
-                            } for c in ['income_statement','test']
+                            },
+                            
                         ],
                         style_table={'borderBottom':'3px solid #13322B'}
                     ),
-                    # html.Div(id='dbc_table_1'),
                 ],
                 type='dot',color='#22594C'
             ),
         ]),
-        # html.Br(),
-        # dbc.Row([
-        #     html.Div(id='dbc_table_1')
-        # ]),
         html.Br(),  
         dbc.Row([
             dbc.Col([
@@ -228,29 +239,24 @@ def update_graph(option_segment,month_sel):
     # Build the dbc table
     df_dbc = legal_view_table.copy()
 
+    print(df_dbc.dtypes)
+
     df_dbc['actual_month'] = df_dbc['actual_month'].map('{:,.1f}'.format)
     df_dbc['forecast_month'] = df_dbc['forecast_month'].map('{:,.1f}'.format)
+    df_dbc['delta_actual_forecast'] = df_dbc['delta_actual_forecast'].map('{:,.1f}'.format)
+    df_dbc['delta%_actual_forecast'] = df_dbc['delta%_actual_forecast'].map('{:.1%}'.format)
     df_dbc['budget_month'] = df_dbc['budget_month'].map('{:,.1f}'.format)
+    df_dbc['delta_actual_budget'] = df_dbc['delta_actual_budget'].map('{:,.1f}'.format)
+    df_dbc['delta%_actual_budget'] = df_dbc['delta%_actual_budget'].map('{:.1%}'.format)
     df_dbc['prev_year_month'] = df_dbc['prev_year_month'].map('{:,.1f}'.format)
-
-    # print(df_dbc.head(10))
-
-    df_dbc.drop(columns={'sort_id'},inplace=True)
-    df_dbc1 = df_dbc.copy()
-    df_dbc1.columns = ['','Actuals','Forecast','Budget','Prev. Year']
-
+    df_dbc['delta_actual_prev_year'] = df_dbc['delta_actual_prev_year'].map('{:,.1f}'.format)
+    df_dbc['delta%_actual_prev_year'] = df_dbc['delta%_actual_prev_year'].map('{:.1%}'.format)
     
-    dbc_table = dbc.Table.from_dataframe(
-                df_dbc1,
-                striped=True, 
-                bordered=True, 
-                hover=True,         
-                style={'background':'white'}
-            )
-
+    
+    print(df_dbc)
+    
     return (mc[0],mc[1],
         df_dbc.to_dict('records'),
-        # dbc_table
     )
 
 # A-SYNC call > so we don't trigger an event uppon refresh
