@@ -134,10 +134,6 @@ layout = html.Div([
                 type='dot',color='#22594C'
             ),
         ]),
-        html.Br(),
-        dbc.Row([
-            html.Div(id='dbc_table_1')
-        ]),
         html.Br(),  
         dbc.Row([
             dbc.Col([
@@ -153,7 +149,6 @@ layout = html.Div([
     Output('external_revenue', 'figure'),
     Output('ebitda_adjusted', 'figure'),
 
-    # Output('data_table_1', 'data'),
     Output('dbc_table_1', 'children'),
 
     Input('slct_segment', 'value'),   
