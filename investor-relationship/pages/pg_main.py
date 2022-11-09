@@ -119,10 +119,8 @@ layout = html.Div([
             ]),
             dbc.Col([
                 dcc.Dropdown(id="slct_month",
-                                # options=[x for x in df_dropdown['SEGMENT'].unique()],
                                 options=[value for value in dict_month_sel.values()],
                                 multi=False,
-                                # value='Group',
                                 style={'width': '150px' }
                                 ),
             ], style= {'display':'flex', 'align-items':'right'}, className= 'flex-row-reverse')
@@ -131,32 +129,14 @@ layout = html.Div([
             dcc.Loading(
                 id='loading-1',
                 children=[
-                    dash_table.DataTable(
-                        id='data_table_1',
-                        data=[],
-                        columns=[
-                            dict(id = 'income_statement', name = ''),
-                            dict(id = 'actual_month', name = 'Actual', type='numeric', format=Format(precision=1, scheme=Scheme.fixed)),
-                            dict(id = 'forecast_month', name = 'Forecast', type='numeric', format=Format(precision=1, scheme=Scheme.fixed)),
-                            dict(id = 'budget_month', name = 'Budget', type='numeric', format=Format(precision=1, scheme=Scheme.fixed)),
-                            dict(id = 'prev_year_month', name = 'Prev. Year', type='numeric', format=Format(precision=1, scheme=Scheme.fixed)),
-                        ],
-                        style_as_list_view=True,
-                        style_cell={'padding': '5px'},
-                        style_header={
-                            'backgroundColor': 'white',
-                            'fontWeight': 'bold'
-                        },
-                        style_cell_conditional=[
-                            {
-                                'if': {'column_id': c},
-                                'textAlign': 'left'
-                            } for c in ['income_statement']
-                        ],
-                    ),
+                    html.Div(id='dbc_table_1')
                 ],
                 type='dot',color='#22594C'
             ),
+        ]),
+        html.Br(),
+        dbc.Row([
+            html.Div(id='dbc_table_1')
         ]),
         html.Br(),  
         dbc.Row([
@@ -173,7 +153,8 @@ layout = html.Div([
     Output('external_revenue', 'figure'),
     Output('ebitda_adjusted', 'figure'),
 
-    Output('data_table_1', 'data'),
+    # Output('data_table_1', 'data'),
+    Output('dbc_table_1', 'children'),
 
     Input('slct_segment', 'value'),   
     Input('slct_month', 'value'),   
@@ -195,29 +176,58 @@ def update_graph(option_segment,month_sel):
 
     legal_view_table = format_data_table(dff,month_map)
 
+    # Build the dbc table ----------------------------------------------------------
+    df_dbc = legal_view_table.copy()
+
+    df_dbc['actual_month'] = df_dbc['actual_month'].map('{:,.1f}'.format)
+    df_dbc['forecast_month'] = df_dbc['forecast_month'].map('{:,.1f}'.format)
+    df_dbc['budget_month'] = df_dbc['budget_month'].map('{:,.1f}'.format)
+    df_dbc['prev_year_month'] = df_dbc['prev_year_month'].map('{:,.1f}'.format)
+
+    df_dbc.drop(columns={'sort_id'},inplace=True)
+    df_dbc.columns = ['','Actuals','Forecast','Budget','Prev. Year']
+
+    # ------------------------------------------------------------------------------
+
+    print(df_dbc.head())
+    dbc_table = dbc.Table.from_dataframe(
+                df_dbc,
+                striped=True, 
+                bordered=True, 
+                hover=True,         
+                style={'background':'white'}    
+            )
+
     return (mc[0],mc[1],
-        legal_view_table.to_dict('records')
+        dbc_table
     )
 
 # A-SYNC call > so we don't trigger an event uppon refresh
 @callback(
    
     Output("download-dataframe-csv", "data"),
+
     Input('slct_segment', 'value'),    
+    Input('slct_month', 'value'),       
     Input("btn_csv", "n_clicks"),
     prevent_initial_call=True,
 )
 
-def update_async(option_segment,n_clicks):
+def update_async(option_segment,month_sel,n_clicks):
 
     if n_clicks is None:
         raise PreventUpdate
     else:
+        month_map = None
+        for key, value in dict_month_sel.items():  
+            if value == month_sel:
+                month_map = key
+
         dff = df.copy()
         dff = dff[dff['segment'] == option_segment]
         dff['date_extract'] = pd.to_datetime(dff['date_extract'], format='%Y-%m-%d')
 
-        legal_view_table = format_data_table(dff)
+        legal_view_table = format_data_table(dff,month_map)
         download_csv = dcc.send_data_frame(legal_view_table.to_csv, "mydf.csv")
         return download_csv
 
