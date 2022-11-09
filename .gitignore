@@ -3,3 +3,4 @@ virt/
 .env
 secrets.json
 user_access.json
+secrets/

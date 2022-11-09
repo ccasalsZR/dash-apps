@@ -12,10 +12,13 @@ import plotly.graph_objects as go
 
 
 
-def format_data_table(df):
+def format_data_table(df,month_map):
 
-
-    df = df[df['date_extract'] >= '2022-01-01']
+    if month_map != None:
+        df = df[df['date_extract'] <= month_map]  
+    else:
+        df
+   
     dff = df[['income_statement','actual_month','forecast_month','budget_month','prev_year_month']]
 
     # list to filter the legal view table
@@ -48,4 +51,4 @@ def format_data_table(df):
 
     # print(dff.head(100))
 
-    return dff.to_dict('records')
+    return dff

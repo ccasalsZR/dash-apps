@@ -20,7 +20,7 @@ navbar = dbc.Navbar(
                 )
             ], width=1),
             dbc.Col([
-                html.H1('Investors relations',className='h1-report-title')
+                html.H1('Investor relations',className='h1-report-title')
             ])            
         ]
     ),

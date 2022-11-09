@@ -17,7 +17,7 @@ footer = html.Div([
                     height="60px", 
                     style={'padding-top': '10px','padding-bottom':'5px'},
                 )
-            ], href='https://www.docmorris.de/')
+            ], href='https://zurrosegroup.com/en/')
         ]),
         dbc.Col([
             html.P("© " + str(date.today().year), style={'color': '#90D5C5', 'font-size': 'small'})
