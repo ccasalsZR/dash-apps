@@ -123,17 +123,70 @@ layout = html.Div([
                                 multi=False,
                                 style={'width': '150px' }
                                 ),
-            ], style= {'display':'flex', 'align-items':'right'}, className= 'flex-row-reverse')
+            ], style= {'display':'flex', 'align-items':'right','float': 'right'}, className= 'flex-row-reverse')
         ]),        
         dbc.Row([
             dcc.Loading(
                 id='loading-1',
                 children=[
-                    html.Div(id='dbc_table_1')
+                    dash_table.DataTable(
+                        id='data_table_1',
+                        data=[],
+                        columns=[
+                            dict(id = 'income_statement', name = ''),
+                            # dict(id = 'actual_month', name = 'Actual', type='numeric', format=Format(precision=1, scheme=Scheme.fixed)),
+                            # dict(id = 'forecast_month', name = 'Forecast', type='numeric', format=Format(precision=1, scheme=Scheme.fixed)),
+                            # dict(id = 'budget_month', name = 'Budget', type='numeric', format=Format(precision=1, scheme=Scheme.fixed)),
+                            # dict(id = 'prev_year_month', name = 'Prev. Year', type='numeric', format=Format(precision=1, scheme=Scheme.fixed)),
+                            dict(id = 'actual_month', name = 'Actual'),
+                            dict(id = 'forecast_month', name = 'Forecast'),
+                            dict(id = 'budget_month', name = 'Budget'),
+                            dict(id = 'prev_year_month', name = 'Prev. Year'),
+                        ],
+                        style_as_list_view=True,
+                        style_cell={'padding': '8px'},
+                        style_header={
+                            'backgroundColor': 'white',
+                            'fontWeight': 'bold',
+                            'borderBottom':'1.5px solid'
+                        },
+                        style_data_conditional=[
+                            {
+                                'if': {'row_index': 'even'},
+                                'backgroundColor': 'rgb(240, 240, 240)',
+                            },
+                            {
+                                'if': {
+                                    'state': 'active'  # 'active' | 'selected'
+                                },
+                                'backgroundColor': 'rgba(34, 89, 76, 0.2)',
+                                'border':'None'
+                            },
+                            {
+                                'if': {
+                                    'filter_query': '{income_statement} = "Gross profit" || {income_statement} = "EBITDA adjusted" || {income_statement} = "EBITDA reported"'
+                                },
+                                'borderBottom':'2px solid #38947F'
+                            },
+                        ],
+                        style_cell_conditional=[
+                            {
+                                'if': {'column_id': c},
+                                'textAlign': 'left',
+                                'marginRight':'10px',                              
+                            } for c in ['income_statement','test']
+                        ],
+                        style_table={'borderBottom':'3px solid #13322B'}
+                    ),
+                    # html.Div(id='dbc_table_1'),
                 ],
                 type='dot',color='#22594C'
             ),
         ]),
+        # html.Br(),
+        # dbc.Row([
+        #     html.Div(id='dbc_table_1')
+        # ]),
         html.Br(),  
         dbc.Row([
             dbc.Col([
@@ -142,14 +195,15 @@ layout = html.Div([
             ]),            
         ]), 
     ]), 
-    html.Br(),   
+    html.Br(), 
 ])
 
 @callback(
     Output('external_revenue', 'figure'),
     Output('ebitda_adjusted', 'figure'),
 
-    Output('dbc_table_1', 'children'),
+    Output('data_table_1', 'data'),
+    # Output('dbc_table_1', 'children'),
 
     Input('slct_segment', 'value'),   
     Input('slct_month', 'value'),   
@@ -171,7 +225,7 @@ def update_graph(option_segment,month_sel):
 
     legal_view_table = format_data_table(dff,month_map)
 
-    # Build the dbc table ----------------------------------------------------------
+    # Build the dbc table
     df_dbc = legal_view_table.copy()
 
     df_dbc['actual_month'] = df_dbc['actual_month'].map('{:,.1f}'.format)
@@ -179,22 +233,24 @@ def update_graph(option_segment,month_sel):
     df_dbc['budget_month'] = df_dbc['budget_month'].map('{:,.1f}'.format)
     df_dbc['prev_year_month'] = df_dbc['prev_year_month'].map('{:,.1f}'.format)
 
+    # print(df_dbc.head(10))
+
     df_dbc.drop(columns={'sort_id'},inplace=True)
-    df_dbc.columns = ['','Actuals','Forecast','Budget','Prev. Year']
+    df_dbc1 = df_dbc.copy()
+    df_dbc1.columns = ['','Actuals','Forecast','Budget','Prev. Year']
 
-    # ------------------------------------------------------------------------------
-
-    print(df_dbc.head())
+    
     dbc_table = dbc.Table.from_dataframe(
-                df_dbc,
+                df_dbc1,
                 striped=True, 
                 bordered=True, 
                 hover=True,         
-                style={'background':'white'}    
+                style={'background':'white'}
             )
 
     return (mc[0],mc[1],
-        dbc_table
+        df_dbc.to_dict('records'),
+        # dbc_table
     )
 
 # A-SYNC call > so we don't trigger an event uppon refresh
