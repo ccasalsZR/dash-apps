@@ -239,8 +239,6 @@ def update_graph(option_segment,month_sel):
     # Build the dbc table
     df_dbc = legal_view_table.copy()
 
-    print(df_dbc.dtypes)
-
     df_dbc['actual_month'] = df_dbc['actual_month'].map('{:,.1f}'.format)
     df_dbc['forecast_month'] = df_dbc['forecast_month'].map('{:,.1f}'.format)
     df_dbc['delta_actual_forecast'] = df_dbc['delta_actual_forecast'].map('{:,.1f}'.format)
@@ -252,9 +250,7 @@ def update_graph(option_segment,month_sel):
     df_dbc['delta_actual_prev_year'] = df_dbc['delta_actual_prev_year'].map('{:,.1f}'.format)
     df_dbc['delta%_actual_prev_year'] = df_dbc['delta%_actual_prev_year'].map('{:.1%}'.format)
     
-    
-    print(df_dbc)
-    
+
     return (mc[0],mc[1],
         df_dbc.to_dict('records'),
     )
