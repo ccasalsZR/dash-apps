@@ -34,9 +34,6 @@ layout = html.Div([
             dbc.Col([
                 html.H1('Engagement'),
             ]) ,         
-            # dbc.Col([
-                
-            # ]) ,
             dbc.Col([
                  dcc.DatePickerRange(
                     id='my-date-picker-range',

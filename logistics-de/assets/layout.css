@@ -1,0 +1,26 @@
+.h1-report-title {
+    font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+    font-size: xx-large;
+}
+
+.h3-sub {
+    font-family: Georgia, 'Times New Roman', Times, serif;
+}
+
+.grid_box {
+    background-color: white ;
+    border-style: solid;
+    border-width: 1px ;
+    border-radius: 6px;
+    border-color: #ededed;
+    margin: 1.5px
+}
+
+.dash-spreadsheet-inner * {
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    font-size: medium;
+    --accent: #1EAEDB !important;
+    --selected-background: #169a9e !important;
+    --selected-color: #3C3C3C !important;
+}
+

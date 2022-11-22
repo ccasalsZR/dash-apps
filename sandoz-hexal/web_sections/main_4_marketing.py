@@ -27,13 +27,13 @@ def get_marketing_data(start_date,end_date):
             'since':start_date,
             'until':end_date
         },
-        # 'filtering':[
-        #     {
-        #         'field':'campaign.id',
-        #         'operator': 'EQUAL',
-        #         'value':23842622944510506,
-        #     },
-        # ],
+        'filtering':[
+            {
+                'field':'campaign.id',
+                'operator': 'EQUAL',
+                'value':23851836028670506,
+            },
+        ],
     }   
 
     fields = [

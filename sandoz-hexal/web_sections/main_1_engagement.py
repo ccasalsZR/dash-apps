@@ -42,6 +42,12 @@ def update_main_sec1(start_date,end_date):
             Metric(name='averageSessionDuration'), # The average duration (in seconds) of users' sessions.
             ],
         date_ranges=[DateRange(start_date=start_date, end_date=end_date)],
+        dimension_filter = FilterExpression (
+            filter = Filter (
+                field_name = 'landingPage',
+                string_filter = Filter.StringFilter(value='/care'),
+            )
+        )
     )
     response = client.run_report(request)
 
