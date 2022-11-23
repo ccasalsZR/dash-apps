@@ -18,7 +18,7 @@ from dotenv import load_dotenv
 VALID_USERNAME_PASSWORD_PAIRS = json.loads(open('secrets/user_access.json', 'r').read())
 
 load_dotenv()
-os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = 'secrets/secrets.json'
+os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = 'secrets.json'
 
 app = dash.Dash(__name__,
                 external_stylesheets=[dbc.themes.BOOTSTRAP],
