@@ -9,6 +9,7 @@ WORKDIR $APP_HOME
 
 # Install Python dependencies and Gunicorn
 ADD requirements.txt .
+RUN pip install --upgrade pip
 RUN pip install --no-cache-dir -r requirements.txt && pip install --no-cache-dir gunicorn
 RUN groupadd -r app && useradd -r -g app app
 

@@ -131,11 +131,17 @@ layout = html.Div([
             ],class_name='grid_box'),
             dbc.Col([
                 html.P('Questionnaire'),
-                dcc.Loading(
-                    id='loading-7',
-                    children=[dcc.Graph(id='conversion-kpi-3',figure={})],
-                    type='dot',color='#22594C'
-                ), 
+                html.P('Under Construction',
+                    style={
+                        'padding-top':'20px',
+                        'font-size':'larger'
+                    }
+                )
+                # dcc.Loading(
+                #     id='loading-7',
+                #     children=[dcc.Graph(id='conversion-kpi-3',figure={})],
+                #     type='dot',color='#22594C'
+                # ), 
             ],class_name='grid_box'),
         ]),
         html.Br(),
@@ -233,7 +239,7 @@ layout = html.Div([
 
     Output('conversion-kpi-1', 'figure'),
     Output('conversion-kpi-2', 'figure'),
-    Output('conversion-kpi-3', 'figure'),
+    # Output('conversion-kpi-3', 'figure'),
 
     # TELECLINIC --------------------------------------------------------------------
     Output('Sessions-2', 'figure'),
@@ -257,7 +263,7 @@ layout = html.Div([
 def update_graph(start_date,end_date,value):
 
     engagement = main_1_engagement.update_main_sec1(start_date,end_date)
-    conversion = main_2_conversion.update_main_sec2()
+    conversion = main_2_conversion.update_main_sec2(start_date,end_date)
 
     teleclinic = main_3_teleclinic.get_teleclinic_ga_insigts(start_date,end_date,value)
 
@@ -265,7 +271,7 @@ def update_graph(start_date,end_date,value):
 
     
     return [engagement[0],engagement[1],engagement[2],engagement[3],engagement[4],engagement[5],engagement[6],
-        conversion[0],conversion[1],conversion[2],
+        conversion[0],conversion[1], # conversion[2],
         teleclinic[0],teleclinic[1],teleclinic[2],
         marketing[0],marketing[1],marketing[2],marketing[3],marketing[4],marketing[5]
     ]

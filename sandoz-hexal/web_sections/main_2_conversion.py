@@ -10,12 +10,13 @@ from google.analytics.data_v1beta.types import Metric
 from google.analytics.data_v1beta.types import RunReportRequest
 from google.analytics.data_v1beta.types import Filter
 from google.analytics.data_v1beta.types import FilterExpression
+from google.analytics.data_v1beta.types import FilterExpressionList
 
 
 import pandas as pd
 
 
-def update_main_sec2():
+def update_main_sec2(start_date,end_date):
 
     # """Runs a simple report on a Google Analytics 4 property."""
     # Using a default constructor instructs the client to use the credentials
@@ -27,42 +28,65 @@ def update_main_sec2():
     # https://developers.google.com/analytics/devguides/reporting/data/v1/api-schema
     request = RunReportRequest(
         property=f"properties/{property_id}",
-        dimensions=[Dimension(name="linkUrl")],
+        dimensions=[Dimension(name="eventName"),
+            Dimension(name="customEvent:eventCategory"),
+            Dimension(name="customEvent:eventLabel"),
+            Dimension(name="customEvent:eventAction"),
+            ],
         metrics=[Metric(name="eventCount"),
             ],
-        date_ranges=[DateRange(start_date='2022-11-01', end_date='2022-11-07')],
+        date_ranges=[DateRange(start_date=start_date, end_date=end_date)],
+
         dimension_filter=FilterExpression(
-                filter=Filter(
-                    field_name="linkUrl",
-                    string_filter=Filter.StringFilter(
-                        match_type='CONTAINS',
-                        value='teleclinic'
-                    )
+            filter=Filter(
+                field_name="pagePath",
+                string_filter=Filter.StringFilter(
+                    match_type='CONTAINS',
+                    value='/care'
                 )
-            ),
+            )
+        )
+
     )
     response = client.run_report(request)
 
     output = []
     for row in response.rows:
-        output.append({"linkUrl": row.dimension_values[0].value,
+        output.append({"eventName": row.dimension_values[0].value,
+            "eventCategory": row.dimension_values[1].value,
+            "eventLabel": row.dimension_values[2].value,
+            "eventAction": row.dimension_values[3].value,
             "eventCount": row.metric_values[0].value,
         })
-    df = pd.DataFrame(output)
 
+    df = pd.DataFrame(output)
+    df = df[(df['eventCategory'] == 'docmorriscare') & ~df['eventAction'].isin(['(not set)',''])]    
 
     # Casting the metrics from the API call
     df = df.astype({'eventCount':'int',
     })
 
 
+
     # TELECLINIC CLICKOUTS ------------------------------------------------------------------------
 
+    df_teleclinic = df.copy()
+    df_teleclinic = df_teleclinic[df_teleclinic['eventAction'].str.contains('teleclinic')]
+
     fig1 = go.Figure(go.Indicator(
-        mode="number+delta",
-        value=df['eventCount'].sum(),
+        mode="number",
+        value = df_teleclinic['eventCount'].sum(),
         domain={"x": [0, 1], "y": [0, 1]},
-        delta = {'reference': 22000, 'relative': True, 'position' : "right", "valueformat": ".2%"},
+        # delta = {
+        #     'reference': 151, 
+        #     'relative': True, 
+        #     'position' : "right", 
+        #     'valueformat': ".2%",
+        #     'decreasing' : {
+        #         'color' : '#22594c',
+        #         'symbol' : ''
+        #     }
+        # },        
         number={
             "font": {"size": 50, 'color': '#22594c'},
         },
@@ -72,11 +96,15 @@ def update_main_sec2():
     )
 
     # CLICKOUTS TO 116117 ----------------------------------------------------------------------------
+
+    df_116117 = df.copy()
+    df_116117 = df_116117[df_116117['eventAction'].str.contains('116117.de')]
+
     fig2 = go.Figure(go.Indicator(
-        mode="number+delta",
-        value=0,
+        mode="number",
+        value= df_116117['eventCount'].sum(),
         domain={"x": [0, 1], "y": [0, 1]},
-        delta = {'reference': 20030, 'relative': True, 'position' : "right", "valueformat": ".2%"},
+        # delta = {'reference': 20030, 'relative': True, 'position' : "right", "valueformat": ".2%"},
         number={
             "font": {"size": 50, 'color': '#22594c'},
         },

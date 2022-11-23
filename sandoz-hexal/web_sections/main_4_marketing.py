@@ -44,7 +44,7 @@ def get_marketing_data(start_date,end_date):
         'cpc', # The average cost for each click (all).
         'ctr', # The percentage of times people saw your ad and performed a click (all).
         'clicks', # The number of clicks on your ads.
-        'impressions',
+        'impressions',  
         # 'outbound_clicks', #The number of clicks on links that take people off Facebook-owned properties.
     ]
 
