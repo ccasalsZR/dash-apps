@@ -19,7 +19,8 @@ navbar = dbc.Navbar(
                     href='/'
                 )
             ]),
-            html.Img(src='.\static\icon\sandoz-seeklogo.com.svg', style={'width':'15%'})
+            html.Img(src='.\static\icon\Logo_Hexal.svg', style={'width':'8%'}),
+            html.Img(src='.\static\icon\Logo_1_A_Pharma.png', style={'width':'5%'})
         ]
     ),
     color='white',
