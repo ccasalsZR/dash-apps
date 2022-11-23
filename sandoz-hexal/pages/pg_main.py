@@ -40,12 +40,7 @@ layout = html.Div([
                     start_date=date(date.today().year, date.today().month-1, date.today().day),
                     end_date=date.today() + timedelta(days=-1)
                 ),
-                dcc.Dropdown(
-                    id='my-multi-dropdown-campaign',
-                    options=['ED', 'Thyroids'],
-                    value=['ED', 'Thyroids'],
-                    multi=True
-                , style= {'hight':'200px', 'width':'300px','margin-right':'10px'}),
+                
             ], style= {'display':'flex', 'align-items':'right'}, className= 'flex-row-reverse')
         ]),
         dbc.Row([
@@ -146,7 +141,19 @@ layout = html.Div([
         ]),
         html.Br(),
         # TELECLINIC CONVERSION ---------------------------------------------------------
-        html.H1('Teleclinic Conv.'),
+        dbc.Row([
+            dbc.Col(
+                html.H1('Teleclinic Conv.'),
+            ),
+            dbc.Col([
+                dcc.Dropdown(
+                    id='my-multi-dropdown-campaign',
+                    options=['ED', 'Thyroids'],
+                    value=['ED', 'Thyroids'],
+                    multi=True
+                , style= {'hight':'200px', 'width':'300px','margin-right':'10px'}),
+            ], style= {'display':'flex', 'align-items':'right'}, className= 'flex-row-reverse')
+        ]),        
         dbc.Row([
             dbc.Col([
                 html.P('Sessions'),
@@ -241,10 +248,6 @@ layout = html.Div([
     Output('conversion-kpi-2', 'figure'),
     # Output('conversion-kpi-3', 'figure'),
 
-    # TELECLINIC --------------------------------------------------------------------
-    Output('Sessions-2', 'figure'),
-    Output('users-2', 'figure'),
-    Output('new_users-1', 'figure'),
 
     # MARKETING CAMPAING ------------------------------------------------------------
     Output('spend-1', 'figure'),
@@ -256,23 +259,37 @@ layout = html.Div([
 
     Input('my-date-picker-range', 'start_date'),
     Input('my-date-picker-range', 'end_date'),
-    Input('my-multi-dropdown-campaign', 'value')
     
     )
 
-def update_graph(start_date,end_date,value):
+def update_graph(start_date,end_date):
 
     engagement = main_1_engagement.update_main_sec1(start_date,end_date)
     conversion = main_2_conversion.update_main_sec2(start_date,end_date)
-
-    teleclinic = main_3_teleclinic.get_teleclinic_ga_insigts(start_date,end_date,value)
 
     marketing = main_4_marketing.get_marketing_data(start_date,end_date)
 
     
     return [engagement[0],engagement[1],engagement[2],engagement[3],engagement[4],engagement[5],engagement[6],
         conversion[0],conversion[1], # conversion[2],
-        teleclinic[0],teleclinic[1],teleclinic[2],
         marketing[0],marketing[1],marketing[2],marketing[3],marketing[4],marketing[5]
     ]
 
+
+@callback (
+    # TELECLINIC --------------------------------------------------------------------
+    Output('Sessions-2', 'figure'),
+    Output('users-2', 'figure'),
+    Output('new_users-1', 'figure'),
+
+    Input('my-date-picker-range', 'start_date'),
+    Input('my-date-picker-range', 'end_date'),
+    Input('my-multi-dropdown-campaign', 'value')
+    
+)
+
+def update_multi_sel(start_date,end_date,value):
+    
+    teleclinic = main_3_teleclinic.get_teleclinic_ga_insigts(start_date,end_date,value)
+
+    return teleclinic[0],teleclinic[1],teleclinic[2],
