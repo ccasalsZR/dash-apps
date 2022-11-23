@@ -15,10 +15,10 @@ import os
 from dotenv import load_dotenv
 
 # Keep this out of source code repository - save in a file or a database
-VALID_USERNAME_PASSWORD_PAIRS = json.loads(open('user_access.json', 'r').read())
+VALID_USERNAME_PASSWORD_PAIRS = json.loads(open('secrets/user_access.json', 'r').read())
 
 load_dotenv()
-os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = 'secrets.json'
+os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = 'secrets/secrets.json'
 
 app = dash.Dash(__name__,
                 external_stylesheets=[dbc.themes.BOOTSTRAP],
