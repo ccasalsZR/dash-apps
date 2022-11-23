@@ -178,7 +178,10 @@ def update_main_sec1(start_date,end_date):
         legend=dict(orientation='h', yanchor='bottom', y=-0.5, xanchor='left', x=0, title=None),
     )
 
-    return [fig1,fig2,fig3,fig4,fig5,fig_line1,fig_donut]
+    # reusable purposes we bring back this KPI
+    act_users = df['Active Users'].sum()
+
+    return [fig1,fig2,fig3,fig4,fig5,fig_line1,fig_donut,act_users]
 
 
 

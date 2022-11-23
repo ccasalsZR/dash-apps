@@ -32,7 +32,7 @@ layout = html.Div([
         # ENGAGEMENT SECTION --------------------------------------------------------------
         dbc.Row([
             dbc.Col([
-                html.H1('Engagement'),
+                html.H1('Engagement',id='tooltip-target'),
             ]) ,         
             dbc.Col([
                  dcc.DatePickerRange(
@@ -50,7 +50,14 @@ layout = html.Div([
                     id='loading-1',
                     children=[dcc.Graph(id='ga_sessions',figure={})],
                     type='dot',color='#22594C'
-                ), 
+                ),
+                dbc.Tooltip(
+                    "The number of sessions "
+                    "that began on your site or app.",
+                    target="ga_sessions",
+                    placement='auto',
+        
+                ),
             ],class_name='grid_box'),
             
             dbc.Col([
@@ -60,6 +67,12 @@ layout = html.Div([
                     children=[dcc.Graph(id='ga_visits',figure={})],
                     type='dot',color='#22594C'
                 ),
+                dbc.Tooltip(
+                    "The number of users who interacted "
+                    "with your site or launched your app for the first time.",
+                    target="ga_visits",
+                    placement='auto',        
+                ),
             ],class_name='grid_box'),
             dbc.Col([
                 html.P('Active Users'),
@@ -67,6 +80,12 @@ layout = html.Div([
                     id='loading-3',
                     children=[dcc.Graph(id='ga_unique_users',figure={})],
                     type='dot',color='#22594C'
+                ),
+                dbc.Tooltip(
+                    "The number of distinct users "
+                    "who visited your site or app.",
+                    target="ga_unique_users",
+                    placement='auto',        
                 ),
             ],class_name='grid_box'),
             dbc.Col([
@@ -76,6 +95,12 @@ layout = html.Div([
                     children=[dcc.Graph(id='page_views-1',figure={})],
                     type='dot',color='#22594C'
                 ),
+                dbc.Tooltip(
+                    "The number of app screens or web pages your users viewed. "
+                    "Repeated views of a single page or screen are counted.",
+                    target="page_views-1",
+                    placement='auto',        
+                ),
             ],class_name='grid_box'),
             dbc.Col([
                 html.P('Avg. Session Duration'),
@@ -83,6 +108,12 @@ layout = html.Div([
                     id='loading-16',
                     children=[dcc.Graph(id='avg_session_duration-1',figure={})],
                     type='dot',color='#22594C'
+                ),
+                dbc.Tooltip(
+                    "The average duration (in seconds) "
+                    "of users' sessions.",
+                    target="avg_session_duration-1",
+                    placement='auto',        
                 ),
             ],class_name='grid_box'),
         ]),
@@ -265,7 +296,10 @@ layout = html.Div([
 def update_graph(start_date,end_date):
 
     engagement = main_1_engagement.update_main_sec1(start_date,end_date)
-    conversion = main_2_conversion.update_main_sec2(start_date,end_date)
+
+    # Extract the stored value
+    act_users = engagement[7] 
+    conversion = main_2_conversion.update_main_sec2(start_date,end_date,act_users)
 
     marketing = main_4_marketing.get_marketing_data(start_date,end_date)
 

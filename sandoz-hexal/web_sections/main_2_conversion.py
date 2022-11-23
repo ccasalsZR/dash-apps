@@ -16,7 +16,7 @@ from google.analytics.data_v1beta.types import FilterExpressionList
 import pandas as pd
 
 
-def update_main_sec2(start_date,end_date):
+def update_main_sec2(start_date,end_date,act_users):
 
     # """Runs a simple report on a Google Analytics 4 property."""
     # Using a default constructor instructs the client to use the credentials
@@ -73,20 +73,23 @@ def update_main_sec2(start_date,end_date):
     df_teleclinic = df.copy()
     df_teleclinic = df_teleclinic[df_teleclinic['eventAction'].str.contains('teleclinic')]
 
+    value_disp = df_teleclinic['eventCount'].sum()
+    reference_disp = value_disp/((value_disp/act_users)+1) # adapting the reference value to change the behaviour of "delta"
+
     fig1 = go.Figure(go.Indicator(
-        mode="number",
-        value = df_teleclinic['eventCount'].sum(),
+        mode="number+delta",
+        value = value_disp,
         domain={"x": [0, 1], "y": [0, 1]},
-        # delta = {
-        #     'reference': 151, 
-        #     'relative': True, 
-        #     'position' : "right", 
-        #     'valueformat': ".2%",
-        #     'decreasing' : {
-        #         'color' : '#22594c',
-        #         'symbol' : ''
-        #     }
-        # },        
+        delta = {
+            'reference': reference_disp, 
+            'relative': True, 
+            'position' : "right", 
+            'valueformat': ".2%",
+            'increasing' : {
+                'color' : '#22594c',
+                'symbol' : ''
+            }
+        },        
         number={
             "font": {"size": 50, 'color': '#22594c'},
         },
@@ -100,11 +103,23 @@ def update_main_sec2(start_date,end_date):
     df_116117 = df.copy()
     df_116117 = df_116117[df_116117['eventAction'].str.contains('116117.de')]
 
+    value_disp = df_116117['eventCount'].sum()
+    reference_disp = value_disp/((value_disp/act_users)+1)  # adapting the reference value to change the behaviour of "delta"
+
     fig2 = go.Figure(go.Indicator(
-        mode="number",
-        value= df_116117['eventCount'].sum(),
+        mode="number+delta",
+        value= value_disp,
         domain={"x": [0, 1], "y": [0, 1]},
-        # delta = {'reference': 20030, 'relative': True, 'position' : "right", "valueformat": ".2%"},
+        delta = {
+            'reference': reference_disp, 
+            'relative': True, 
+            'position' : "right", 
+            'valueformat': ".2%",
+            'increasing' : {
+                'color' : '#22594c',
+                'symbol' : ''
+            }
+        }, 
         number={
             "font": {"size": 50, 'color': '#22594c'},
         },
