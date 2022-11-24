@@ -140,34 +140,30 @@ layout = html.Div([
         html.H1('Conversion'),
         dbc.Row([
             dbc.Col([
-                html.P('Clickouts to TC'),
-                dcc.Loading(
-                    id='loading-5',
-                    children=[dcc.Graph(id='conversion-kpi-1',figure={})],
-                    type='dot',color='#22594C'
-                ), 
-            ],class_name='grid_box'),
-            dbc.Col([
-                html.P('Clickouts to "116117"'),
-                dcc.Loading(
-                    id='loading-6',
-                    children=[dcc.Graph(id='conversion-kpi-2',figure={})],
-                    type='dot',color='#22594C'
-                ), 
-            ],class_name='grid_box'),
+                dbc.Col([
+                    html.P('Clickouts to TC',style={'padding-left':'4px'}),
+                    dcc.Loading(
+                        id='loading-5',
+                        children=[dcc.Graph(id='conversion-kpi-1',figure={})],
+                        type='dot',color='#22594C'
+                    ), 
+                ],class_name='grid_box'),
+                dbc.Col([
+                    html.P('Clickouts to "116117"',style={'padding-left':'4px'}),
+                    dcc.Loading(
+                        id='loading-6',
+                        children=[dcc.Graph(id='conversion-kpi-2',figure={})],
+                        type='dot',color='#22594C'
+                    ), 
+                ],class_name='grid_box'),
+            ], width= 4, style={'padding':'0px'}),
             dbc.Col([
                 html.P('Questionnaire'),
-                html.P('Under Construction',
-                    style={
-                        'padding-top':'20px',
-                        'font-size':'larger'
-                    }
-                )
-                # dcc.Loading(
-                #     id='loading-7',
-                #     children=[dcc.Graph(id='conversion-kpi-3',figure={})],
-                #     type='dot',color='#22594C'
-                # ), 
+                dcc.Loading(
+                    id='loading-7',
+                    children=[dcc.Graph(id='conversion-kpi-3',figure={})],
+                    type='dot',color='#22594C'
+                ), 
             ],class_name='grid_box'),
         ]),
         html.Br(),
@@ -277,7 +273,7 @@ layout = html.Div([
 
     Output('conversion-kpi-1', 'figure'),
     Output('conversion-kpi-2', 'figure'),
-    # Output('conversion-kpi-3', 'figure'),
+    Output('conversion-kpi-3', 'figure'),
 
 
     # MARKETING CAMPAING ------------------------------------------------------------
@@ -300,12 +296,13 @@ def update_graph(start_date,end_date):
     # Extract the stored value
     act_users = engagement[7] 
     conversion = main_2_conversion.update_main_sec2(start_date,end_date,act_users)
+    questionnaire = main_2_conversion.questionnare(start_date,end_date)
 
     marketing = main_4_marketing.get_marketing_data(start_date,end_date)
 
     
     return [engagement[0],engagement[1],engagement[2],engagement[3],engagement[4],engagement[5],engagement[6],
-        conversion[0],conversion[1], # conversion[2],
+        conversion[0],conversion[1], questionnaire, # conversion[2],
         marketing[0],marketing[1],marketing[2],marketing[3],marketing[4],marketing[5]
     ]
 
