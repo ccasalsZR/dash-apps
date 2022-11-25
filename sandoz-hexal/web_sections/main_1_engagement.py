@@ -16,20 +16,15 @@ from google.analytics.data_v1beta.types import Filter
 from google.analytics.data_v1beta.types import FilterExpression
 
 
-import os
-from dotenv import load_dotenv
-load_dotenv()
-os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = 'secrets.json'
-
-def update_main_sec1(start_date,end_date):
-
      
-    # """Runs a simple report on a Google Analytics 4 property."""
-    # Using a default constructor instructs the client to use the credentials
-    # specified in GOOGLE_APPLICATION_CREDENTIALS environment variable.
-    client = BetaAnalyticsDataClient()
-    property_id = '283963042'
+# """Runs a simple report on a Google Analytics 4 property."""
+# Using a default constructor instructs the client to use the credentials
+# specified in GOOGLE_APPLICATION_CREDENTIALS environment variable.
+client = BetaAnalyticsDataClient()
+property_id = '283963042'
 
+
+def api_call_date_level(start_date,end_date):
     # Documentation for Dims and Metrics:
     # https://developers.google.com/analytics/devguides/reporting/data/v1/api-schema
     request = RunReportRequest(
@@ -44,8 +39,11 @@ def update_main_sec1(start_date,end_date):
         date_ranges=[DateRange(start_date=start_date, end_date=end_date)],
         dimension_filter = FilterExpression (
             filter = Filter (
-                field_name = 'landingPage',
-                string_filter = Filter.StringFilter(value='/care'),
+                field_name = 'pagePath',
+                string_filter = Filter.StringFilter(
+                    value = '/care',
+                    match_type = Filter.StringFilter.MatchType(2), # 2 == BEGINS_WITH
+                ),
             )
         )
     )
@@ -62,6 +60,61 @@ def update_main_sec1(start_date,end_date):
         })
     df = pd.DataFrame(output)
 
+
+    # Casting the metrics from the API call
+    df = df.astype({'Sessions':'int',
+        'New Users':'int',
+        'Active Users':'int',
+        'Page Views':'int',
+        'Avg. Session Duration':'float32',
+    })
+    
+    # sort dataframe
+    df = df.sort_values(by=['Date'])
+
+    return df
+
+
+
+def update_main_sec1(start_date,end_date):
+
+
+    # Documentation for Dims and Metrics:
+    # https://developers.google.com/analytics/devguides/reporting/data/v1/api-schema
+    request = RunReportRequest(
+        property=f"properties/{property_id}",
+        # dimensions=[Dimension(name="date")],
+        metrics=[Metric(name="sessions"),
+            Metric(name="newUsers"),
+            Metric(name="activeUsers"), # distinct users
+            Metric(name='screenPageViews'), # The number of app screens or web pages your users viewed
+            Metric(name='averageSessionDuration'), # The average duration (in seconds) of users' sessions.
+            ],
+        date_ranges=[DateRange(start_date=start_date, end_date=end_date)],
+        dimension_filter = FilterExpression (
+            filter = Filter (
+                field_name = 'pagePath',
+                string_filter = Filter.StringFilter(
+                    value = '/care',
+                    match_type = Filter.StringFilter.MatchType(2), # 2 == BEGINS_WITH
+                ),
+            )
+        )
+    )
+    response = client.run_report(request)
+
+    output = []
+    for row in response.rows:
+        output.append({ # "Date": row.dimension_values[0].value,
+            "Sessions": row.metric_values[0].value,
+            "New Users": row.metric_values[1].value,
+            "Active Users": row.metric_values[2].value,
+            "Page Views": row.metric_values[3].value,
+            "Avg. Session Duration": row.metric_values[4].value,
+        })
+    df = pd.DataFrame(output)
+
+
     # Casting the metrics from the API call
     df = df.astype({'Sessions':'int',
         'New Users':'int',
@@ -70,8 +123,8 @@ def update_main_sec1(start_date,end_date):
         'Avg. Session Duration':'float32',
     })
 
-    # sort dataframe
-    df = df.sort_values(by=['Date'])
+    # # sort dataframe
+    # df = df.sort_values(by=['Date'])
 
 
     # GENERATION OF THE VISUAL ------------------------------------------------------
@@ -81,6 +134,7 @@ def update_main_sec1(start_date,end_date):
         domain={"x": [0, 1], "y": [0, 1]},
         number={
             "font": {"size": 50, 'color': '#22594c'},
+            'valueformat': ",.0f",
         },
     ))
     fig1.update_layout(
@@ -105,6 +159,7 @@ def update_main_sec1(start_date,end_date):
         domain={"x": [0, 1], "y": [0, 1]},
         number={
             "font": {"size": 50, 'color': '#22594c'},
+            'valueformat': ",.0f",
         },
     ))
     fig3.update_layout(
@@ -117,6 +172,7 @@ def update_main_sec1(start_date,end_date):
         domain={"x": [0, 1], "y": [0, 1]},
         number={
             "font": {"size": 50, 'color': '#22594c'},
+            'valueformat': ",.0f",
         },
     ))
     fig4.update_layout(
@@ -138,8 +194,10 @@ def update_main_sec1(start_date,end_date):
 
     # Line chart for the evolution of the metrics above
 
+    dff = api_call_date_level(start_date,end_date)
+
     fig_line1 = px.line(
-        df,
+        dff,
         x='Date',
         y=df.columns[1:4],
         color_discrete_sequence=['#22594C', '#38947F', '#90D5C5'],
@@ -159,9 +217,11 @@ def update_main_sec1(start_date,end_date):
     #     margin=dict(l=10, r=10, t=20, b=0)
     )
 
-    df_donut = df.copy()
-    # df_donut = df_donut[['Sessions','Active Users']].sum()
-    df_donut = df[['Active Users','New Users']]
+
+    # DONUT visual
+
+    df_donut = dff.copy()
+    df_donut = df_donut[['Active Users','New Users']]
     df_donut['Repeat Users'] = df_donut['Active Users'] - df_donut['New Users']
     df_donut.drop(columns=['Active Users'],inplace=True)
 

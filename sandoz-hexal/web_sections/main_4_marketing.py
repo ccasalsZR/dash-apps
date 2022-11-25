@@ -125,7 +125,8 @@ def get_marketing_data(start_date,end_date):
         },
     ))
     fig4.update_layout(
-        height=200,
+        # height=200,
+        height=100,
     )
 
     # Cost per Click -----------------------------------------------------------

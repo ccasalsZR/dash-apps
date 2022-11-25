@@ -16,14 +16,19 @@ from google.analytics.data_v1beta.types import FilterExpressionList
 import pandas as pd
 import numpy as np
 
+import os
+from dotenv import load_dotenv
+load_dotenv()
+os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = 'secrets.json'
+
+# """Runs a simple report on a Google Analytics 4 property."""
+# Using a default constructor instructs the client to use the credentials
+# specified in GOOGLE_APPLICATION_CREDENTIALS environment variable.
+client = BetaAnalyticsDataClient()
+property_id = '283963042'
 
 def update_main_sec2(start_date,end_date,act_users):
 
-    # """Runs a simple report on a Google Analytics 4 property."""
-    # Using a default constructor instructs the client to use the credentials
-    # specified in GOOGLE_APPLICATION_CREDENTIALS environment variable.
-    client = BetaAnalyticsDataClient()
-    property_id = '283963042'
 
     # Documentation for Dims and Metrics:
     # https://developers.google.com/analytics/devguides/reporting/data/v1/api-schema
@@ -61,14 +66,20 @@ def update_main_sec2(start_date,end_date,act_users):
         })
 
     df = pd.DataFrame(output)
-    df = df[(df['eventCategory'] == 'docmorriscare') & ~df['eventAction'].isin(['(not set)',''])]    
 
     # Casting the metrics from the API call
     df = df.astype({'eventCount':'int',
     })
 
+    
 
+    
+    df_donwload_video = df.copy()
+    df = df[(df['eventCategory'] == 'docmorriscare') & ~df['eventAction'].isin(['(not set)',''])]    
 
+ 
+
+    
     # TELECLINIC CLICKOUTS ------------------------------------------------------------------------
 
     df_teleclinic = df.copy()
@@ -93,6 +104,7 @@ def update_main_sec2(start_date,end_date,act_users):
         },        
         number={
             "font": {"size": 50, 'color': '#22594c'},
+            'valueformat': ",.0f"
         },
     ))
     fig1.update_layout(
@@ -129,24 +141,86 @@ def update_main_sec2(start_date,end_date,act_users):
         height=120,
     )
 
+    
+    # BRING THE DOWNLOAD AND START VIDEO 
+    #  THIS HAS A SLIGHTLY DIFFERENT FILTER THAT'S WHY IT'S IN A DIFFERENT BLOCK
 
-    return fig1, fig2
+    
+    df_donwload_video.to_csv('toDelete.csv')
+
+    df_donwload_video = df_donwload_video[
+            (df_donwload_video['eventCategory'] == 'docmorriscare') 
+            & df_donwload_video['eventLabel'].isin(['Hier herunterladen','Hier herunterladen\n','Video abspielen','Video abspielen\n'])
+        ] 
+
+
+    #  VIDEO PLAYS ----------------------------------------------------------------------------------------
+    df_download = df_donwload_video[
+            df_donwload_video['eventLabel'].isin(['Hier herunterladen','Hier herunterladen\n'])
+        ] 
+    value_disp = df_download['eventCount'].sum()    
+    reference_disp = value_disp/((value_disp/act_users)+1)  # adapting the reference value to change the behaviour of "delta"
+
+    fig3 = go.Figure(go.Indicator(
+        mode="number+delta",
+        value= value_disp,
+        domain={"x": [0, 1], "y": [0, 1]},
+        delta = {
+            'reference': reference_disp, 
+            'relative': True, 
+            'position' : "right", 
+            'valueformat': ".2%",
+            'increasing' : {
+                'color' : '#22594c',
+                'symbol' : ''
+            }
+        }, 
+        number={
+            "font": {"size": 50, 'color': '#22594c'},
+        },
+    ))
+    fig3.update_layout(
+        height=120,
+    )
+    
+    #  VIDEO PLAYS ----------------------------------------------------------------------------------------
+    df_video = df_donwload_video[
+            df_donwload_video['eventLabel'].isin(['Video abspielen','Video abspielen\n'])
+        ] 
+    value_disp = df_video['eventCount'].sum()
+    reference_disp = value_disp/((value_disp/act_users)+1)  # adapting the reference value to change the behaviour of "delta"
+
+    fig4 = go.Figure(go.Indicator(
+        mode="number+delta",
+        value= value_disp,
+        domain={"x": [0, 1], "y": [0, 1]},
+        delta = {
+            'reference': reference_disp, 
+            'relative': True, 
+            'position' : "right", 
+            'valueformat': ".2%",
+            'increasing' : {
+                'color' : '#22594c',
+                'symbol' : ''
+            }
+        }, 
+        number={
+            "font": {"size": 50, 'color': '#22594c'},
+        },
+    ))
+    fig4.update_layout(
+        height=120,
+    )
+
+    return fig1, fig2, fig3, fig4
+
+# update_main_sec2('2022-10-25','2022-11-24',100)
 
 
 
-
-import os
-from dotenv import load_dotenv
-load_dotenv()
-os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = 'secrets.json'
 
 def questionnare(start_date,end_date):
 
-    # """Runs a simple report on a Google Analytics 4 property."""
-    # Using a default constructor instructs the client to use the credentials
-    # specified in GOOGLE_APPLICATION_CREDENTIALS environment variable.
-    client = BetaAnalyticsDataClient()
-    property_id = '283963042'
 
     # Documentation for Dims and Metrics:
     # https://developers.google.com/analytics/devguides/reporting/data/v1/api-schema
@@ -254,10 +328,10 @@ def questionnare(start_date,end_date):
 
     # Logic to create cat. for the different Conversion types.
     df_end_of_Q['type'] = np.where(
-            df_end_of_Q['eventAction'].str.contains('schilddruese'), 
+            df_end_of_Q['eventAction'].str.contains('116117'), 
             '116117', 
             np.where(
-                df_end_of_Q['eventAction'].str.contains('erektionsstoerungen'),
+                df_end_of_Q['eventAction'].str.contains('teleclinic'),
                 'Teleclinic',
                 ''
             )
@@ -315,5 +389,3 @@ def questionnare(start_date,end_date):
 
     return fig
 
-
-questionnare('2022-11-01','2022-11-23')

@@ -13,7 +13,8 @@ import pandas as pd
 from datetime import date, timedelta
 
 
-from web_sections import main_1_engagement, main_2_conversion, main_3_teleclinic, main_4_marketing
+# from web_sections import , main_2_conversion, main_3_teleclinic, main_4_marketing
+import web_sections as ws
 
 
 dash.register_page(
@@ -51,28 +52,14 @@ layout = html.Div([
                     children=[dcc.Graph(id='ga_sessions',figure={})],
                     type='dot',color='#22594C'
                 ),
-                dbc.Tooltip(
-                    "The number of sessions "
-                    "that began on your site or app.",
-                    target="ga_sessions",
-                    placement='auto',
-        
-                ),
-            ],class_name='grid_box'),
-            
+            ],class_name='grid_box'),            
             dbc.Col([
                 html.P('New Users'),
                 dcc.Loading(
                     id='loading-2',
                     children=[dcc.Graph(id='ga_visits',figure={})],
                     type='dot',color='#22594C'
-                ),
-                dbc.Tooltip(
-                    "The number of users who interacted "
-                    "with your site or launched your app for the first time.",
-                    target="ga_visits",
-                    placement='auto',        
-                ),
+                ),                
             ],class_name='grid_box'),
             dbc.Col([
                 html.P('Active Users'),
@@ -80,13 +67,7 @@ layout = html.Div([
                     id='loading-3',
                     children=[dcc.Graph(id='ga_unique_users',figure={})],
                     type='dot',color='#22594C'
-                ),
-                dbc.Tooltip(
-                    "The number of distinct users "
-                    "who visited your site or app.",
-                    target="ga_unique_users",
-                    placement='auto',        
-                ),
+                ),                
             ],class_name='grid_box'),
             dbc.Col([
                 html.P('Page Views'),
@@ -94,13 +75,7 @@ layout = html.Div([
                     id='loading-15',
                     children=[dcc.Graph(id='page_views-1',figure={})],
                     type='dot',color='#22594C'
-                ),
-                dbc.Tooltip(
-                    "The number of app screens or web pages your users viewed. "
-                    "Repeated views of a single page or screen are counted.",
-                    target="page_views-1",
-                    placement='auto',        
-                ),
+                ),                
             ],class_name='grid_box'),
             dbc.Col([
                 html.P('Avg. Session Duration'),
@@ -108,15 +83,35 @@ layout = html.Div([
                     id='loading-16',
                     children=[dcc.Graph(id='avg_session_duration-1',figure={})],
                     type='dot',color='#22594C'
-                ),
-                dbc.Tooltip(
-                    "The average duration (in seconds) "
-                    "of users' sessions.",
-                    target="avg_session_duration-1",
-                    placement='auto',        
-                ),
+                ),                
             ],class_name='grid_box'),
         ]),
+        dbc.Tooltip(
+            "The number of sessions that began on your site or app.",
+            target="ga_sessions",
+            placement='auto',
+
+        ),
+        dbc.Tooltip(
+            "The number of users who interacted with your site or launched your app for the first time.",
+            target="ga_visits",
+            placement='auto',        
+        ),
+        dbc.Tooltip(
+            "The number of app screens or web pages your users viewed. Repeated views of a single page or screen are counted.",
+            target="page_views-1",
+            placement='auto',        
+        ),
+        dbc.Tooltip(
+            "The number of distinct users who visited your site or app.",
+            target="ga_unique_users",
+            placement='auto',        
+        ),
+        dbc.Tooltip(
+            "The average duration (in seconds) of users' sessions.",            
+            target="avg_session_duration-1",
+            placement='auto',        
+        ),
         dbc.Row([
             dbc.Col([
                 html.P('Evolution of activity'),
@@ -156,7 +151,7 @@ layout = html.Div([
                         type='dot',color='#22594C'
                     ), 
                 ],class_name='grid_box'),
-            ], width= 4, style={'padding':'0px'}),
+            ], width= 3, style={'padding':'0px'}),
             dbc.Col([
                 html.P('Questionnaire'),
                 dcc.Loading(
@@ -165,6 +160,24 @@ layout = html.Div([
                     type='dot',color='#22594C'
                 ), 
             ],class_name='grid_box'),
+            dbc.Col([
+                dbc.Col([
+                    html.P('Donwloads',style={'padding-left':'4px'}),
+                    dcc.Loading(
+                        id='loading-5',
+                        children=[dcc.Graph(id='donwload_pdf',figure={})],
+                        type='dot',color='#22594C'
+                    ), 
+                ],class_name='grid_box'),
+                dbc.Col([
+                    html.P('Video plays',style={'padding-left':'4px'}),
+                    dcc.Loading(
+                        id='loading-6',
+                        children=[dcc.Graph(id='video_start',figure={})],
+                        type='dot',color='#22594C'
+                    ), 
+                ],class_name='grid_box'),
+            ], width= 3, style={'padding':'0px'}),
         ]),
         html.Br(),
         # TELECLINIC CONVERSION ---------------------------------------------------------
@@ -212,21 +225,21 @@ layout = html.Div([
         # MARKETING CAMPAING ------------------------------------------------------------
         html.H1("Marketing Campaign"),
         dbc.Row([
+            # dbc.Col([
+            #     html.P('Spend'),
+            #     dcc.Loading(
+            #         id='loading-6',
+            #         children=[dcc.Graph(id='spend-1',figure={})],
+            #         type='dot',color='#22594C'
+            #     ), 
+            # ],class_name='grid_box'),
             dbc.Col([
-                html.P('Spend'),
-                dcc.Loading(
-                    id='loading-6',
-                    children=[dcc.Graph(id='spend-1',figure={})],
-                    type='dot',color='#22594C'
-                ), 
-            ],class_name='grid_box'),
-            dbc.Col([
-                html.P('CPM'),
-                dcc.Loading(
-                    id='loading-7',
-                    children=[dcc.Graph(id='cpm-1',figure={})],
-                    type='dot',color='#22594C'
-                ), 
+                # html.P('CPM'),
+                # dcc.Loading(
+                #     id='loading-7',
+                #     children=[dcc.Graph(id='cpm-1',figure={})],
+                #     type='dot',color='#22594C'
+                # ), 
                 html.P('Impressions'),
                 dcc.Loading(
                     id='loading-8',
@@ -243,12 +256,12 @@ layout = html.Div([
                 ), 
             ],class_name='grid_box'),
             dbc.Col([
-                html.P('Cost per Click'),
-                dcc.Loading(
-                    id='loading-10',
-                    children=[dcc.Graph(id='cost_per_click-1',figure={})],
-                    type='dot',color='#22594C'
-                ), 
+                # html.P('Cost per Click'),
+                # dcc.Loading(
+                #     id='loading-10',
+                #     children=[dcc.Graph(id='cost_per_click-1',figure={})],
+                #     type='dot',color='#22594C'
+                # ), 
                 html.P('Clicks'),
                 dcc.Loading(
                     id='loading-11',
@@ -262,6 +275,7 @@ layout = html.Div([
 ])
 
 @callback(
+    # GA4 ENGAGEMENT + CONVERSION
     Output('ga_sessions', 'figure'),
     Output('ga_visits', 'figure'),
     Output('ga_unique_users', 'figure'),
@@ -274,38 +288,56 @@ layout = html.Div([
     Output('conversion-kpi-1', 'figure'),
     Output('conversion-kpi-2', 'figure'),
     Output('conversion-kpi-3', 'figure'),
-
-
-    # MARKETING CAMPAING ------------------------------------------------------------
-    Output('spend-1', 'figure'),
-    Output('cpm-1', 'figure'),
-    Output('impressions-1', 'figure'),
-    Output('ctr-1', 'figure'),
-    Output('cost_per_click-1', 'figure'),
-    Output('clicks-1', 'figure'),
+    Output('donwload_pdf', 'figure'),
+    Output('video_start', 'figure'),
 
     Input('my-date-picker-range', 'start_date'),
     Input('my-date-picker-range', 'end_date'),
     
     )
 
-def update_graph(start_date,end_date):
+def update_engagement_conversion(start_date,end_date):
 
-    engagement = main_1_engagement.update_main_sec1(start_date,end_date)
+    engagement = ws.update_main_sec1(start_date,end_date)
 
     # Extract the stored value
     act_users = engagement[7] 
-    conversion = main_2_conversion.update_main_sec2(start_date,end_date,act_users)
-    questionnaire = main_2_conversion.questionnare(start_date,end_date)
+    conversion = ws.update_main_sec2(start_date,end_date,act_users)
+    questionnaire = ws.questionnare(start_date,end_date)
 
-    marketing = main_4_marketing.get_marketing_data(start_date,end_date)
+    
 
     
     return [engagement[0],engagement[1],engagement[2],engagement[3],engagement[4],engagement[5],engagement[6],
-        conversion[0],conversion[1], questionnaire, # conversion[2],
-        marketing[0],marketing[1],marketing[2],marketing[3],marketing[4],marketing[5]
+        conversion[0],conversion[1], questionnaire, conversion[2], conversion[3]
     ]
 
+
+@callback (
+    # MARKETING CAMPAING ------------------------------------------------------------
+    # Output('spend-1', 'figure'),
+    # Output('cpm-1', 'figure'),
+    Output('impressions-1', 'figure'),
+    Output('ctr-1', 'figure'),
+    # Output('cost_per_click-1', 'figure'),
+    Output('clicks-1', 'figure'),
+
+    Input('my-date-picker-range', 'start_date'),
+    Input('my-date-picker-range', 'end_date'),
+
+)
+def update_marketing(start_date,end_date):
+
+    marketing = ws.get_marketing_data(start_date,end_date)
+
+
+    return [ # marketing[0],
+        # marketing[1],
+        marketing[2],
+        marketing[3],
+        # marketing[4],
+        marketing[5]
+    ]
 
 @callback (
     # TELECLINIC --------------------------------------------------------------------
@@ -321,6 +353,6 @@ def update_graph(start_date,end_date):
 
 def update_multi_sel(start_date,end_date,value):
     
-    teleclinic = main_3_teleclinic.get_teleclinic_ga_insigts(start_date,end_date,value)
+    teleclinic = ws.get_teleclinic_ga_insigts(start_date,end_date,value)
 
     return teleclinic[0],teleclinic[1],teleclinic[2],
