@@ -76,7 +76,6 @@ def update_main_sec2(start_date,end_date,act_users):
     
     df_donwload_video = df.copy()
     df = df[(df['eventCategory'] == 'docmorriscare') & ~df['eventAction'].isin(['(not set)',''])]    
-
  
 
     
@@ -145,8 +144,6 @@ def update_main_sec2(start_date,end_date,act_users):
     # BRING THE DOWNLOAD AND START VIDEO 
     #  THIS HAS A SLIGHTLY DIFFERENT FILTER THAT'S WHY IT'S IN A DIFFERENT BLOCK
 
-    
-    df_donwload_video.to_csv('toDelete.csv')
 
     df_donwload_video = df_donwload_video[
             (df_donwload_video['eventCategory'] == 'docmorriscare') 
@@ -377,7 +374,8 @@ def questionnare(start_date,end_date):
                 'did not convert':'#38947F',
                 'Teleclinic':'#F0b92d',
                 '116117':'#C3900E'
-            }, # ['#22594C','#F0b92d','#C3900E'],
+            }, 
+            text = 'sessions',
         )
     fig.update_layout(
         # legend=dict(orientation='h', yanchor='bottom', y=-0.5, xanchor='left', x=0, title=None),

@@ -220,7 +220,8 @@ def update_main_sec1(start_date,end_date):
 
     # DONUT visual
 
-    df_donut = dff.copy()
+    df_donut = df.copy()
+
     df_donut = df_donut[['Active Users','New Users']]
     df_donut['Repeat Users'] = df_donut['Active Users'] - df_donut['New Users']
     df_donut.drop(columns=['Active Users'],inplace=True)

@@ -33,7 +33,7 @@ layout = html.Div([
         # ENGAGEMENT SECTION --------------------------------------------------------------
         dbc.Row([
             dbc.Col([
-                html.H1('Engagement',id='tooltip-target'),
+                html.H1('Engagement'),
             ]) ,         
             dbc.Col([
                  dcc.DatePickerRange(
@@ -46,7 +46,7 @@ layout = html.Div([
         ]),
         dbc.Row([
             dbc.Col([
-                html.P('Sessions'),
+                html.P('Sessions',id='tt_sessions'),
                 dcc.Loading(
                     id='loading-1',
                     children=[dcc.Graph(id='ga_sessions',figure={})],
@@ -54,15 +54,15 @@ layout = html.Div([
                 ),
             ],class_name='grid_box'),            
             dbc.Col([
-                html.P('New Users'),
+                html.P('New Users',id='tt_newUsers'),
                 dcc.Loading(
                     id='loading-2',
-                    children=[dcc.Graph(id='ga_visits',figure={})],
+                    children=[dcc.Graph(id='ga_newUsers',figure={})],
                     type='dot',color='#22594C'
                 ),                
             ],class_name='grid_box'),
             dbc.Col([
-                html.P('Active Users'),
+                html.P('Active Users',id='tt_activeUsers'),
                 dcc.Loading(
                     id='loading-3',
                     children=[dcc.Graph(id='ga_unique_users',figure={})],
@@ -70,7 +70,7 @@ layout = html.Div([
                 ),                
             ],class_name='grid_box'),
             dbc.Col([
-                html.P('Page Views'),
+                html.P('Page Views',id='tt_page_View'),
                 dcc.Loading(
                     id='loading-15',
                     children=[dcc.Graph(id='page_views-1',figure={})],
@@ -78,7 +78,7 @@ layout = html.Div([
                 ),                
             ],class_name='grid_box'),
             dbc.Col([
-                html.P('Avg. Session Duration'),
+                html.P('Avg. Session Duration',id='tt_avgSessionDuration'),
                 dcc.Loading(
                     id='loading-16',
                     children=[dcc.Graph(id='avg_session_duration-1',figure={})],
@@ -88,28 +88,27 @@ layout = html.Div([
         ]),
         dbc.Tooltip(
             "The number of sessions that began on your site or app.",
-            target="ga_sessions",
+            target="tt_sessions",
             placement='auto',
-
         ),
         dbc.Tooltip(
             "The number of users who interacted with your site or launched your app for the first time.",
-            target="ga_visits",
-            placement='auto',        
-        ),
-        dbc.Tooltip(
-            "The number of app screens or web pages your users viewed. Repeated views of a single page or screen are counted.",
-            target="page_views-1",
+            target="tt_newUsers",
             placement='auto',        
         ),
         dbc.Tooltip(
             "The number of distinct users who visited your site or app.",
-            target="ga_unique_users",
+            target="tt_activeUsers",
+            placement='auto',        
+        ),
+        dbc.Tooltip(
+            "The number of app screens or web pages your users viewed. Repeated views of a single page or screen are counted.",
+            target="tt_page_View",
             placement='auto',        
         ),
         dbc.Tooltip(
             "The average duration (in seconds) of users' sessions.",            
-            target="avg_session_duration-1",
+            target="tt_avgSessionDuration",
             placement='auto',        
         ),
         dbc.Row([
@@ -212,7 +211,7 @@ layout = html.Div([
                 ), 
             ],class_name='grid_box'),
             dbc.Col([
-                html.P('Page Views'),
+                html.P('New Users'),
                 dcc.Loading(
                     id='loading-14',
                     children=[dcc.Graph(id='new_users-1',figure={})],
@@ -277,7 +276,7 @@ layout = html.Div([
 @callback(
     # GA4 ENGAGEMENT + CONVERSION
     Output('ga_sessions', 'figure'),
-    Output('ga_visits', 'figure'),
+    Output('ga_newUsers', 'figure'),
     Output('ga_unique_users', 'figure'),
     Output('page_views-1', 'figure'),    
     Output('avg_session_duration-1', 'figure'),    
