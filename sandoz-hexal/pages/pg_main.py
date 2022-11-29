@@ -53,19 +53,19 @@ layout = html.Div([
                     type='dot',color='#22594C'
                 ),
             ],class_name='grid_box'),            
-            dbc.Col([
-                html.P('New Users',id='tt_newUsers'),
-                dcc.Loading(
-                    id='loading-2',
-                    children=[dcc.Graph(id='ga_newUsers',figure={})],
-                    type='dot',color='#22594C'
-                ),                
-            ],class_name='grid_box'),
-            dbc.Col([
+            dbc.Col([                
                 html.P('Active Users',id='tt_activeUsers'),
                 dcc.Loading(
                     id='loading-3',
                     children=[dcc.Graph(id='ga_unique_users',figure={})],
+                    type='dot',color='#22594C'
+                ),                 
+            ],class_name='grid_box'),
+            dbc.Col([           
+                html.P('New Users',id='tt_newUsers'),
+                dcc.Loading(
+                    id='loading-2',
+                    children=[dcc.Graph(id='ga_newUsers',figure={})],
                     type='dot',color='#22594C'
                 ),                
             ],class_name='grid_box'),
@@ -161,7 +161,7 @@ layout = html.Div([
             ],class_name='grid_box'),
             dbc.Col([
                 dbc.Col([
-                    html.P('Donwloads',style={'padding-left':'4px'}),
+                    html.P('Downloads',style={'padding-left':'4px'}),
                     dcc.Loading(
                         id='loading-5',
                         children=[dcc.Graph(id='donwload_pdf',figure={})],
@@ -203,7 +203,7 @@ layout = html.Div([
                 ), 
             ],class_name='grid_box'),
             dbc.Col([
-                html.P('Users'),
+                html.P('Active Users'),
                 dcc.Loading(
                     id='loading-13',
                     children=[dcc.Graph(id='users-2',figure={})],

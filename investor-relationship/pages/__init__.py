@@ -1,4 +1,3 @@
 # pull in components from files in the current directory to make imports cleaner
-from .main_1_monthly_sec import monthly_chart
-from .main_2_legal_table_sec import format_data_table, format_data_table_new
+from .pg_main import format_data_table, format_data_table_new
 # from .body_container import body_container

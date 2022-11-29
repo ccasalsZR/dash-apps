@@ -16,8 +16,10 @@ def monthly_chart (df):
     df = df[['date_extract','income_statement','prev_year_month','actual_month','budget_month','forecast_month']]
 
     # INCOME STATEMENT ---------------------------------
-    dff = df[(df['income_statement'] == 'External Revenues') & (df['date_extract'] >= '2022-01-01')]
+    # dff = df[(df['income_statement'] == 'External Revenues') & (df['date_extract'] >= '2022-01-01')]
+    dff = df[(df['income_statement'] == 'External Revenues')]
     dff = dff.sort_values(by='date_extract')
+
     
     fig1 = go.Figure()
     fig1.add_trace(go.Scatter(x=dff['date_extract'],y=dff['prev_year_month'],
@@ -43,7 +45,8 @@ def monthly_chart (df):
 
 
     # EBITDA ADJUSTED -----------------------------------
-    dff = df[(df['income_statement'] == 'EBITDA adjusted') & (df['date_extract'] >= '2022-01-01')]
+    # dff = df[(df['income_statement'] == 'EBITDA adjusted') & (df['date_extract'] >= '2022-01-01')]
+    dff = df[(df['income_statement'] == 'EBITDA adjusted')]
     dff = dff.sort_values(by='date_extract')
 
     fig2 = go.Figure()

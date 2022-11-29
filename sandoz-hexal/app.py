@@ -36,13 +36,23 @@ auth = dash_auth.BasicAuth(
 
 # ------------------------------------------------------------------------------
 # App layout
-app.layout = html.Div([
-    navbar,
-    dash.page_container,
-    footer
-], style={'background': '#f8fcfb'})
+
+def layout(): 
+    return html.Div([
+        navbar,
+        dash.page_container,
+        footer
+    ], style={'background': '#f8fcfb'})
+
+app.layout = layout
+
+# app.layout = html.Div([
+#     navbar,
+#     dash.page_container,
+#     footer
+# ], style={'background': '#f8fcfb'})
 
 
 # # ------------------------------------------------------------------------------
 if __name__ == '__main__':
-    app.run_server(debug=False, host='0.0.0.0', port=8080)
+    app.run_server(debug=True, host='0.0.0.0', port=8080)
