@@ -121,32 +121,7 @@ layout = html.Div([
             dbc.Col([
                 html.H3('Legal View',className='h3-sub'),
             ]),
-            # dbc.Col([
-            #     dcc.Dropdown(id="slct_month",
-            #                     options=[value for value in dict_month_sel.values()],
-            #                     multi=False,
-            #                     style={'width': '150px' }
-            #                     ),
-            # ], style= {'display':'flex', 'align-items':'right','float': 'right'}, className= 'flex-row-reverse')
         ]),        
-        # dbc.Row([
-        #     dcc.Loading(
-        #         id='loading-1',
-        #         children=[
-        #             html.Div(id = 'div_table_1',
-        #                 children = [],
-        #             ),
-        #         ],
-        #         type='dot',color='#22594C'
-        #     ),
-        # ]),
-        # html.Br(),  
-        # dbc.Row([
-        #     dbc.Col([
-        #         dbc.Button("Download CSV", id="btn_csv"),
-        #         dcc.Download(id="download-dataframe-csv"),
-        #     ]),            
-        # ]),        
         html.Br(),   
         dbc.Row([
             dcc.RangeSlider(
@@ -173,7 +148,7 @@ layout = html.Div([
                     15: 'Dec 22',
                     
                 },
-                value=[1, 5],
+                value=[4, 12],
             ),
         ],style={'padding-bottom':'25px'}),
         dbc.Row([
@@ -195,13 +170,9 @@ layout = html.Div([
     Output('external_revenue', 'figure'),
     Output('ebitda_adjusted', 'figure'),
 
-    # Output('data_table_1', 'data'),
-    # Output('div_table_1', 'children'),
     Output('div_table_2', 'children'),
-    # Output('dbc_table_1', 'children'),
 
     Input('slct_segment', 'value'),   
-    # Input('slct_month', 'value'),   
     Input('range_slider_1', 'value'),   
 
 )
@@ -218,11 +189,6 @@ def update_graph(option_segment,month_slide):
 
 
 
-    # month_map = None
-    # for key, value in dict_month_sel.items():  
-    #     if value == month_sel:
-    #         month_map = key
-
     dff = df.copy()
     dff = dff[dff['segment'] == option_segment]
     dff['date_extract'] = pd.to_datetime(dff['date_extract'], format='%Y-%m-%d')
@@ -230,97 +196,11 @@ def update_graph(option_segment,month_slide):
 
     mc = wc.monthly_chart(dff)
 
-    # legal_view_table = wc.format_data_table(dff,month_map)
-
-    # # Build the dbc table
-    # df_dbc = legal_view_table.copy()
-
-    # df_dbc['actual_month'] = df_dbc['actual_month'].map('{:,.1f}'.format)
-    # df_dbc['forecast_month'] = df_dbc['forecast_month'].map('{:,.1f}'.format)
-    # df_dbc['delta_actual_forecast'] = df_dbc['delta_actual_forecast'].map('{:,.1f}'.format)
-    # df_dbc['delta%_actual_forecast'] = df_dbc['delta%_actual_forecast'].map('{:.1%}'.format)
-    # df_dbc['budget_month'] = df_dbc['budget_month'].map('{:,.1f}'.format)
-    # df_dbc['delta_actual_budget'] = df_dbc['delta_actual_budget'].map('{:,.1f}'.format)
-    # df_dbc['delta%_actual_budget'] = df_dbc['delta%_actual_budget'].map('{:.1%}'.format)
-    # df_dbc['prev_year_month'] = df_dbc['prev_year_month'].map('{:,.1f}'.format)
-    # df_dbc['delta_actual_prev_year'] = df_dbc['delta_actual_prev_year'].map('{:,.1f}'.format)
-    # df_dbc['delta%_actual_prev_year'] = df_dbc['delta%_actual_prev_year'].map('{:.1%}'.format)
     
-    # dashT = dash_table.DataTable(   
-    #     id='data_table_1',
-    #     data=df_dbc.to_dict('records'),
-    #     columns=[
-    #         dict(id = 'income_statement', name = ''),
-    #         dict(id = 'actual_month', name = 'Actual'),
-    #         dict(id = 'forecast_month', name = 'Forecast'),
-    #         dict(id = 'delta_actual_forecast', name = 'Δ'),
-    #         dict(id = 'delta%_actual_forecast', name = 'Δ(%)'),
-    #         dict(id = 'budget_month', name = 'Budget'),
-    #         dict(id = 'delta_actual_budget', name = 'Δ'),
-    #         dict(id = 'delta%_actual_budget', name = 'Δ(%)'),
-    #         dict(id = 'prev_year_month', name = 'Prev. Year'),                            
-    #         dict(id = 'delta_actual_prev_year', name = 'Δ'),
-    #         dict(id = 'delta%_actual_prev_year', name = 'Δ(%)'),
-    #     ],
-    #     style_as_list_view=True,
-    #     style_cell={'padding': '8px'},
-    #     style_header={
-    #         'backgroundColor': 'white',
-    #         'fontWeight': 'bold',
-    #         'borderBottom':'1.5px solid'
-    #     },
-    #     style_data_conditional=[
-    #         # {
-    #         #     'if': {'row_index': 'even'},
-    #         #     'backgroundColor': 'rgb(240, 240, 240)',
-    #         # },
-    #         {
-    #             'if': {
-    #                 'state': 'active'  # 'active' | 'selected'
-    #             },
-    #             'backgroundColor': 'rgba(34, 89, 76, 0.2)',
-    #             'border':'None'
-    #         },
-    #         {
-    #             'if': {
-    #                 'filter_query': '{income_statement} = "Gross profit" || {income_statement} = "EBITDA adjusted" || {income_statement} = "EBITDA reported"'
-    #             },
-    #             'borderBottom':'2px solid #38947F'
-    #         },
-    #         {
-    #             'if': {
-    #                 'column_id': 'actual_month'
-    #             },
-    #             'backgroundColor': 'rgba(56, 148, 127,0.17)',
-    #         },
-    #         {
-    #             'if': {
-    #                 'column_id': ['delta_actual_forecast','delta%_actual_forecast','delta_actual_budget','delta%_actual_budget','delta_actual_prev_year','delta%_actual_prev_year']
-    #             },
-    #             'backgroundColor': 'rgb(245, 245, 245)',
-    #         },  
-    #     ],
-    #     style_cell_conditional=[
-    #         {
-    #             'if': {
-    #                 'column_id': 'income_statement'
-    #             },
-    #             'textAlign': 'left',
-    #         },
-            
-    #     ],
-    #     style_table={'borderBottom':'3px solid #13322B'}
-    # ),  
-
-
-
-    
-    dashT2 = wc.format_data_table_new(dff,range_month[0],range_month[1])
+    dashT = wc.dynamic_data_table(dff,range_month[0],range_month[1])
    
     return (mc[0],mc[1],
-        # df_dbc.to_dict('records'),
-        # dashT,
-        dashT2
+        dashT
     )
 
 # # A-SYNC call > so we don't trigger an event uppon refresh
