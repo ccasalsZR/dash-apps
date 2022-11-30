@@ -2,6 +2,7 @@
 
 from random import random
 from dash import html, callback, Output, Input, dcc
+import dash_daq as daq
 
 import os
 # from dotenv import load_dotenv
@@ -121,6 +122,15 @@ layout = html.Div([
             dbc.Col([
                 html.H3('Legal View',className='h3-sub'),
             ]),
+            dbc.Col([
+                html.P('Monthly', style={'padding-right':'5px'}),
+                daq.BooleanSwitch(
+                    id='boolean_switch',
+                    on=True,
+                    color="#22594C",
+                ),
+                html.P('Cumulative',style={'padding-left':'5px'}),
+            ], class_name="d-flex justify-content-end")
         ]),        
         html.Br(),   
         dbc.Row([
@@ -146,7 +156,6 @@ layout = html.Div([
                     13: 'Oct 22',
                     14: 'Nov 22',
                     15: 'Dec 22',
-                    
                 },
                 value=[4, 12],
             ),
@@ -172,20 +181,20 @@ layout = html.Div([
 
     Output('div_table_2', 'children'),
 
-    Input('slct_segment', 'value'),   
+    Input('slct_segment', 'value'),       
+    Input('boolean_switch', 'on'),   
     Input('range_slider_1', 'value'),   
 
 )
 
-def update_graph(option_segment,month_slide):
-
+def update_graph(option_segment,switch,month_slide):
 
     range_month = []
     for n in month_slide:
         if n < 4: # is 2021
-            start_range = range_month.append('2021-'+ str("{:02d}".format(n+9)) +'-01')
+            range_month.append('2021-'+ str("{:02d}".format(n+9)) +'-01')
         elif n < (4+12): # is 2022
-            start_range = range_month.append('2022-'+ str("{:02d}".format(n-3)) +'-01')
+            range_month.append('2022-'+ str("{:02d}".format(n-3)) +'-01')
 
 
 
@@ -197,7 +206,7 @@ def update_graph(option_segment,month_slide):
     mc = wc.monthly_chart(dff)
 
     
-    dashT = wc.dynamic_data_table(dff,range_month[0],range_month[1])
+    dashT = wc.dynamic_data_table(dff,range_month[0],range_month[1],switch)
    
     return (mc[0],mc[1],
         dashT

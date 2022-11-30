@@ -3,7 +3,7 @@
 
 from random import random
 import pandas as pd
-pd.options.mode.chained_assignment = None  # default='warn'
+pd.options.mode.chained_assignment = None  # type: ignore # default='warn'
 import numpy as np
 
 from datetime import datetime
@@ -12,9 +12,13 @@ from dash import dash_table
 import plotly.express as px 
 import plotly.graph_objects as go
 
-def pivot_and_clean_table(df,type):
+def pivot_and_clean_table(df,type,switch):
 
     df = pd.pivot_table(df, values= [type], index='income_statement',columns='date_extract_disp')
+
+    if switch:
+        df = df.cumsum(axis=1)
+
     df.columns = df.columns.map(' | '.join).str.strip(' | ')
 
     # df_pivot.columns = df_pivot.columns.droplevel(0) #remove amount
@@ -23,20 +27,24 @@ def pivot_and_clean_table(df,type):
 
     return df
 
-def dynamic_data_table(df,start_range,end_range):
+def dynamic_data_table(df,start_range,end_range,switch):
 
-
+    
+    
     df = df[(df['date_extract'] >= start_range) & (df['date_extract'] <= end_range)]  
    
     dff = df[['income_statement','date_extract','actual_month','forecast_month','budget_month','prev_year_month']]
     dff['date_extract_disp'] = pd.to_datetime(df['date_extract']).dt.strftime('%Y/%m')
-
+    
     dff['AC'] = dff['actual_month'].round(1)
     dff['FC'] = dff['forecast_month'].round(1)
     dff['BG'] = dff['budget_month'].round(1)
     dff['PV'] = dff['prev_year_month'].round(1)
 
 
+    
+    # dff['AC_cum'] = dff['actual_month'].cumsum()
+    # print(dff.dtypes)
 
     # list to filter the legal view table
     value_list = {
@@ -99,8 +107,10 @@ def dynamic_data_table(df,start_range,end_range):
     dff_FC = dff[dff['date_extract'] > '2022-10-01']
 
 
-    df_pivot_AC = pivot_and_clean_table(dff_AC,'AC')
-    df_pivot_FC = pivot_and_clean_table(dff_FC,'FC')
+    df_pivot_AC = pivot_and_clean_table(dff_AC,'AC',switch)
+    df_pivot_FC = pivot_and_clean_table(dff_FC,'FC',switch)
+
+    
 
     df_pivot = pd.merge(df_pivot_AC, df_pivot_FC, how='outer', on = ['income_statement'])
 
