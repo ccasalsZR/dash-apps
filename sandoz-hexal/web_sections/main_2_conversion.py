@@ -360,6 +360,8 @@ def questionnare(start_date,end_date):
     dff.rename(columns={'sessions_start':'sessions'},inplace=True)
 
     dffe = df_end_of_Q[['treatment','type','sessions']]
+    dffe = dffe.groupby(by=['treatment','type']).sum()
+    dffe.reset_index(inplace=True)
 
     dfff = pd.concat([dff,dffe], ignore_index=True)
     

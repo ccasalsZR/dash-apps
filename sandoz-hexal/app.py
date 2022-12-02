@@ -37,20 +37,12 @@ auth = dash_auth.BasicAuth(
 # ------------------------------------------------------------------------------
 # App layout
 
-def layout(): 
-    return html.Div([
+
+app.layout = html.Div([
         navbar,
         dash.page_container,
         footer
     ], style={'background': '#f8fcfb'})
-
-app.layout = layout
-
-# app.layout = html.Div([
-#     navbar,
-#     dash.page_container,
-#     footer
-# ], style={'background': '#f8fcfb'})
 
 
 # # ------------------------------------------------------------------------------

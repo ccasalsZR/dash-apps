@@ -24,10 +24,10 @@ dash.register_page(
 ) # Home page
 
 
-
-
-
-layout = html.Div([
+# The layout it's inside a function so everytime it load the page we load 
+# again the layout so we can have dynamic values for the time-picker element
+def layout(): 
+    return html.Div([
     html.Br(),
     dbc.Container([
         # ENGAGEMENT SECTION --------------------------------------------------------------
@@ -36,7 +36,7 @@ layout = html.Div([
                 html.H1('Engagement'),
             ]) ,         
             dbc.Col([
-                 dcc.DatePickerRange(
+                dcc.DatePickerRange(
                     id='my-date-picker-range',
                     start_date=date(date.today().year, date.today().month-1, date.today().day),
                     end_date=date.today() + timedelta(days=-1)
@@ -272,6 +272,8 @@ layout = html.Div([
     ]),
     html.Br()
 ])
+
+
 
 @callback(
     # GA4 ENGAGEMENT + CONVERSION
