@@ -30,10 +30,11 @@ def layout():
     return html.Div([
     html.Br(),
     dbc.Container([
-        # ENGAGEMENT SECTION --------------------------------------------------------------
+        
+        # MARKETING CAMPAING ------------------------------------------------------------
         dbc.Row([
             dbc.Col([
-                html.H1('Engagement'),
+                html.H1("Marketing Campaign"),
             ]) ,         
             dbc.Col([
                 dcc.DatePickerRange(
@@ -44,6 +45,69 @@ def layout():
                 
             ], style= {'display':'flex', 'align-items':'right'}, className= 'flex-row-reverse')
         ]),
+        dbc.Row([
+            # dbc.Col([
+            #     html.P('Spend'),
+            #     dcc.Loading(
+            #         id='loading-6',
+            #         children=[dcc.Graph(id='spend-1',figure={})],
+            #         type='dot',color='#22594C'
+            #     ), 
+            # ],class_name='grid_box'),
+            dbc.Col([
+                # html.P('CPM'),
+                # dcc.Loading(
+                #     id='loading-7',
+                #     children=[dcc.Graph(id='cpm-1',figure={})],
+                #     type='dot',color='#22594C'
+                # ), 
+                html.P('Impressions'),
+                dcc.Loading(
+                    id='loading-8',
+                    children=[dcc.Graph(id='impressions-1',figure={})],
+                    type='dot',color='#22594C'
+                ), 
+            ],class_name='grid_box'),
+            dbc.Col([
+                html.P('CTR'),
+                dcc.Loading(
+                    id='loading-9',
+                    children=[dcc.Graph(id='ctr-1',figure={})],
+                    type='dot',color='#22594C'
+                ), 
+            ],class_name='grid_box'),
+            dbc.Col([
+                # html.P('Cost per Click'),
+                # dcc.Loading(
+                #     id='loading-10',
+                #     children=[dcc.Graph(id='cost_per_click-1',figure={})],
+                #     type='dot',color='#22594C'
+                # ), 
+                html.P('Clicks'),
+                dcc.Loading(
+                    id='loading-11',
+                    children=[dcc.Graph(id='clicks-1',figure={})],
+                    type='dot',color='#22594C'
+                ), 
+            ],class_name='grid_box'),
+        ]),
+
+        html.Br(),
+        # ENGAGEMENT SECTION --------------------------------------------------------------
+        html.H1('Engagement'),
+        # dbc.Row([
+        #     dbc.Col([
+        #         html.H1('Engagement'),
+        #     ]) ,         
+        #     dbc.Col([
+        #         dcc.DatePickerRange(
+        #             id='my-date-picker-range',
+        #             start_date=date(date.today().year, date.today().month-1, date.today().day),
+        #             end_date=date.today() + timedelta(days=-1)
+        #         ),
+                
+        #     ], style= {'display':'flex', 'align-items':'right'}, className= 'flex-row-reverse')
+        # ]),
         dbc.Row([
             dbc.Col([
                 html.P('Sessions',id='tt_sessions'),
@@ -220,55 +284,7 @@ def layout():
             ],class_name='grid_box'),
         ]),
         
-        html.Br(),
-        # MARKETING CAMPAING ------------------------------------------------------------
-        html.H1("Marketing Campaign"),
-        dbc.Row([
-            # dbc.Col([
-            #     html.P('Spend'),
-            #     dcc.Loading(
-            #         id='loading-6',
-            #         children=[dcc.Graph(id='spend-1',figure={})],
-            #         type='dot',color='#22594C'
-            #     ), 
-            # ],class_name='grid_box'),
-            dbc.Col([
-                # html.P('CPM'),
-                # dcc.Loading(
-                #     id='loading-7',
-                #     children=[dcc.Graph(id='cpm-1',figure={})],
-                #     type='dot',color='#22594C'
-                # ), 
-                html.P('Impressions'),
-                dcc.Loading(
-                    id='loading-8',
-                    children=[dcc.Graph(id='impressions-1',figure={})],
-                    type='dot',color='#22594C'
-                ), 
-            ],class_name='grid_box'),
-            dbc.Col([
-                html.P('CTR'),
-                dcc.Loading(
-                    id='loading-9',
-                    children=[dcc.Graph(id='ctr-1',figure={})],
-                    type='dot',color='#22594C'
-                ), 
-            ],class_name='grid_box'),
-            dbc.Col([
-                # html.P('Cost per Click'),
-                # dcc.Loading(
-                #     id='loading-10',
-                #     children=[dcc.Graph(id='cost_per_click-1',figure={})],
-                #     type='dot',color='#22594C'
-                # ), 
-                html.P('Clicks'),
-                dcc.Loading(
-                    id='loading-11',
-                    children=[dcc.Graph(id='clicks-1',figure={})],
-                    type='dot',color='#22594C'
-                ), 
-            ],class_name='grid_box'),
-        ]),
+        
     ]),
     html.Br()
 ])
