@@ -27,7 +27,15 @@ os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = 'secrets.json'
 client = BetaAnalyticsDataClient()
 property_id = '283963042'
 
-def update_main_sec2(start_date,end_date,act_users):
+def update_main_sec2(start_date,end_date,act_users,treatment):
+
+    if len(treatment) == 2 or len(treatment) == 0:
+        value_filter = '/care'
+    elif treatment[0] == 'ED':
+        value_filter = '/care/erektionsstoerungen'
+    elif treatment[0] == 'Thyroids':
+        value_filter = '/care/schilddruese'
+    
 
 
     # Documentation for Dims and Metrics:
@@ -48,7 +56,7 @@ def update_main_sec2(start_date,end_date,act_users):
                 field_name="pagePath",
                 string_filter=Filter.StringFilter(
                     match_type='CONTAINS',
-                    value='/care'
+                    value=value_filter
                 )
             )
         )
@@ -216,7 +224,19 @@ def update_main_sec2(start_date,end_date,act_users):
 
 
 
-def questionnare(start_date,end_date):
+def questionnare(start_date,end_date,treatment):
+
+
+    value_filter = []
+    if len(treatment) == 0:
+        value_filter.append('/care/erektionsstoerungen/symptomcheck')
+        value_filter.append('/care/schilddruese/symptomcheck')
+    else:
+        for i in treatment:
+            if i == 'ED':
+                value_filter.append('/care/erektionsstoerungen/symptomcheck')
+            elif i == 'Thyroids':
+                value_filter.append('/care/schilddruese/symptomcheck')
 
 
     # Documentation for Dims and Metrics:
@@ -233,10 +253,7 @@ def questionnare(start_date,end_date):
             filter=Filter(
                 field_name="pagePath",
                 in_list_filter = Filter.InListFilter(
-                    values=[
-                        '/care/schilddruese/symptomcheck',
-                        '/care/erektionsstoerungen/symptomcheck',
-                    ]
+                    values=value_filter
                 )
             )
         )
@@ -270,6 +287,9 @@ def questionnare(start_date,end_date):
 
     # LET'S GET THE CONVERSION AT THE END OF THE QUESTIONNAIRE --------------------------------------------------------------
 
+    value_filter = [s + '/ergebnis1' for s in value_filter ]
+    
+
     # Documentation for Dims and Metrics:
     # https://developers.google.com/analytics/devguides/reporting/data/v1/api-schema
     request = RunReportRequest(
@@ -288,10 +308,7 @@ def questionnare(start_date,end_date):
             filter=Filter(
                 field_name="pagePath",
                 in_list_filter = Filter.InListFilter(
-                    values=[
-                        '/care/schilddruese/symptomcheck/ergebnis1',
-                        '/care/erektionsstoerungen/symptomcheck/ergebnis1',
-                    ]
+                    values=value_filter
                 )
             )
         )

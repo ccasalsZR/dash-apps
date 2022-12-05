@@ -57,7 +57,9 @@ def get_teleclinic_ga_insigts(start_date,end_date,campaign_selected):
     }
 
     df['campaing_mapped'] = df['Campaign'].map(map_campaign)
-    df = df[df['campaing_mapped'].isin(campaign_selected)]
+    
+    if len(campaign_selected) > 0:
+        df = df[df['campaing_mapped'].isin(campaign_selected)]
 
 
     fig1 = go.Figure(go.Indicator(

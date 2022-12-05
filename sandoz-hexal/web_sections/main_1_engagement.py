@@ -24,7 +24,7 @@ client = BetaAnalyticsDataClient()
 property_id = '283963042'
 
 
-def api_call_date_level(start_date,end_date):
+def api_call_date_level(start_date,end_date,value_filter):
     # Documentation for Dims and Metrics:
     # https://developers.google.com/analytics/devguides/reporting/data/v1/api-schema
     request = RunReportRequest(
@@ -41,7 +41,7 @@ def api_call_date_level(start_date,end_date):
             filter = Filter (
                 field_name = 'pagePath',
                 string_filter = Filter.StringFilter(
-                    value = '/care',
+                    value = value_filter,
                     match_type = Filter.StringFilter.MatchType(2), # 2 == BEGINS_WITH
                 ),
             )
@@ -76,7 +76,16 @@ def api_call_date_level(start_date,end_date):
 
 
 
-def update_main_sec1(start_date,end_date):
+def update_main_sec1(start_date,end_date,treatment):
+
+
+    if len(treatment) == 2 or len(treatment) == 0:
+        value_filter = '/care'
+    elif treatment[0] == 'ED':
+        value_filter = '/care/erektionsstoerungen'
+    elif treatment[0] == 'Thyroids':
+        value_filter = '/care/schilddruese'
+    
 
 
     # Documentation for Dims and Metrics:
@@ -95,7 +104,7 @@ def update_main_sec1(start_date,end_date):
             filter = Filter (
                 field_name = 'pagePath',
                 string_filter = Filter.StringFilter(
-                    value = '/care',
+                    value = value_filter,
                     match_type = Filter.StringFilter.MatchType(2), # 2 == BEGINS_WITH
                 ),
             )
@@ -194,7 +203,7 @@ def update_main_sec1(start_date,end_date):
 
     # Line chart for the evolution of the metrics above
 
-    dff = api_call_date_level(start_date,end_date)
+    dff = api_call_date_level(start_date,end_date,value_filter)
 
     fig_line1 = px.line(
         dff,

@@ -94,20 +94,20 @@ def layout():
 
         html.Br(),
         # ENGAGEMENT SECTION --------------------------------------------------------------
-        html.H1('Engagement'),
-        # dbc.Row([
-        #     dbc.Col([
-        #         html.H1('Engagement'),
-        #     ]) ,         
-        #     dbc.Col([
-        #         dcc.DatePickerRange(
-        #             id='my-date-picker-range',
-        #             start_date=date(date.today().year, date.today().month-1, date.today().day),
-        #             end_date=date.today() + timedelta(days=-1)
-        #         ),
-                
-        #     ], style= {'display':'flex', 'align-items':'right'}, className= 'flex-row-reverse')
-        # ]),
+        dbc.Row([
+            dbc.Col([
+                html.H1('Engagement')
+            ]),
+            dbc.Col([
+                dcc.Dropdown(
+                    id='my-multi-dropdown-campaign',
+                    options=['ED', 'Thyroids'],
+                    value=['ED', 'Thyroids'],
+                    multi=True
+                , style= {'hight':'200px', 'width':'300px','margin-right':'10px'}),
+            ], style= {'display':'flex', 'align-items':'right'}, className= 'flex-row-reverse')
+        ]),
+
         dbc.Row([
             dbc.Col([
                 html.P('Sessions',id='tt_sessions'),
@@ -219,7 +219,7 @@ def layout():
                 html.P('Questionnaire'),
                 dcc.Loading(
                     id='loading-7',
-                    children=[dcc.Graph(id='conversion-kpi-3',figure={})],
+                    children=[dcc.Graph(id='barchart_questionnaire',figure={})],
                     type='dot',color='#22594C'
                 ), 
             ],class_name='grid_box'),
@@ -244,19 +244,7 @@ def layout():
         ]),
         html.Br(),
         # TELECLINIC CONVERSION ---------------------------------------------------------
-        dbc.Row([
-            dbc.Col(
-                html.H1('Teleclinic Conv.'),
-            ),
-            dbc.Col([
-                dcc.Dropdown(
-                    id='my-multi-dropdown-campaign',
-                    options=['ED', 'Thyroids'],
-                    value=['ED', 'Thyroids'],
-                    multi=True
-                , style= {'hight':'200px', 'width':'300px','margin-right':'10px'}),
-            ], style= {'display':'flex', 'align-items':'right'}, className= 'flex-row-reverse')
-        ]),        
+        html.H1('Teleclinic Conv.'),
         dbc.Row([
             dbc.Col([
                 html.P('Sessions'),
@@ -304,31 +292,40 @@ def layout():
 
     Output('conversion-kpi-1', 'figure'),
     Output('conversion-kpi-2', 'figure'),
-    Output('conversion-kpi-3', 'figure'),
     Output('donwload_pdf', 'figure'),
     Output('video_start', 'figure'),
 
     Input('my-date-picker-range', 'start_date'),
     Input('my-date-picker-range', 'end_date'),
+    Input('my-multi-dropdown-campaign', 'value')
     
     )
 
-def update_engagement_conversion(start_date,end_date):
+def update_engagement_conversion(start_date,end_date,value):
 
-    engagement = ws.update_main_sec1(start_date,end_date)
+    engagement = ws.update_main_sec1(start_date,end_date,value)
 
     # Extract the stored value
     act_users = engagement[7] 
-    conversion = ws.update_main_sec2(start_date,end_date,act_users)
-    questionnaire = ws.questionnare(start_date,end_date)
-
+    conversion = ws.update_main_sec2(start_date,end_date,act_users,value)
     
-
     
     return [engagement[0],engagement[1],engagement[2],engagement[3],engagement[4],engagement[5],engagement[6],
-        conversion[0],conversion[1], questionnaire, conversion[2], conversion[3]
+        conversion[0],conversion[1], conversion[2], conversion[3]
     ]
 
+
+@callback (
+    
+    Output('barchart_questionnaire', 'figure'),
+
+    Input('my-date-picker-range', 'start_date'),
+    Input('my-date-picker-range', 'end_date'),
+    Input('my-multi-dropdown-campaign', 'value')
+)
+
+def update_questionnaire(start_date,end_date,value):
+    return ws.questionnare(start_date,end_date,value)
 
 @callback (
     # MARKETING CAMPAING ------------------------------------------------------------
