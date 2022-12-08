@@ -6,19 +6,21 @@ import plotly.graph_objects as go
 
 import pandas as pd
 
-def oo_created_today():
+def kpi_template(value_disp):
 
     fig = go.Figure(go.Indicator(
         mode="number",
-        value=0, #df['Page Views'].sum(),
+        value=value_disp,
         domain={"x": [0, 1], "y": [0, 1]},
         number={
-            "font": {"size": 40, 'color': '#a6b3b0'},
+            "font": {"size": 40, 'color': '#22594c'},
             'valueformat': ",.0f",
         },
     ))
     fig.update_layout(
-        height=150,
+        height=100,
     )
 
     return fig
+
+

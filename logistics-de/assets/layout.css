@@ -12,7 +12,11 @@
     border-width: 1px ;
     border-radius: 6px;
     border-color: #ededed;
-    margin: 1.5px
+    margin: 1px;
+}
+
+.grid_box_empty {
+    margin: 1px;
 }
 
 .dash-spreadsheet-inner * {
