@@ -19,9 +19,9 @@ navbar = dbc.Navbar(
                     href='/'
                 )
             ], width=1),
-            dbc.Col([
-                html.H1('Backlog Monitor', className='h1-report-title')
-            ])            
+            # dbc.Col([
+            #     html.H1('Backlog Monitor', className='h1-report-title')
+            # ])            
         ]
     ),
     color='white',

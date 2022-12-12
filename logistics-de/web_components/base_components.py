@@ -24,3 +24,16 @@ def kpi_template(value_disp):
     return fig
 
 
+def open_order_chart(df):
+
+    chart = px.bar(
+        df,
+        x='open_orders',
+        y='backlog_day_cat',
+        color_discrete_sequence = ['#22594C']
+    )
+    chart.update_layout(
+        plot_bgcolor='#fff'
+    )
+
+    return chart

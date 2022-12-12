@@ -1,1 +1,1 @@
-from .open_orders import kpi_template
+from .base_components import kpi_template,open_order_chart
