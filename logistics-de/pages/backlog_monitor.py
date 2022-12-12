@@ -16,8 +16,7 @@ import dash_bootstrap_components as dbc
 import pandas as pd
 from datetime import date, timedelta
 
-from sqlalchemy import create_engine
-from snowflake.sqlalchemy import URL
+
 
 from dotenv import load_dotenv
 load_dotenv()
@@ -33,30 +32,11 @@ dash.register_page(
 ) # Home page
 
 
-# # MAIN EXTRACT TO WORK WITH THE LOCAL FILES ------------------
-
 DB_SNOW_PASS = os.getenv('DB_SNOW_PASS')
 DB_SNOW_USER = os.getenv('DB_SNOW_USER')
 
 
-def execute_query(script):
-    engine = create_engine(URL(
-            account = 'docmorris.eu-central-1',
-            user = DB_SNOW_USER,
-            password = DB_SNOW_PASS,
-            database = 'EDW',
-            # schema = 'public',
-            warehouse = 'WH_TABLEAU',
-            # role='myrole',
-        ))
-    try:
-        connection = engine.connect()
-        query = open(script, 'r').read()        
-        df = pd.read_sql_query(query, engine)
-    finally:
-        connection.close()
-        engine.dispose()
-    return df
+
 
     
 layout = html.Div([
@@ -73,14 +53,14 @@ layout = html.Div([
                 html.H3('DCA Order Flow',className='h3-sub'),
             ]),
             dbc.Col([
-                # html.P('Data as of: ' + str(date_asof) )
+                html.P(id='kpi_data_asof', children=[] )
             ], style= {'display':'flex', 'align-items':'right'}, className= 'flex-row-reverse')
         ]),
         html.Hr(),
         dbc.Row([
             # Created Today
             dbc.Col([
-                html.P('Created Today'),
+                html.P('Created Today', id='tt_created_today'),
                 dcc.Loading(
                     children = [dcc.Graph(id='kpi_created_today',figure={})]
                     ,type='dot',color='#22594C'
@@ -88,7 +68,7 @@ layout = html.Div([
             ],class_name='grid_box'),
             # Backlog ERP
             dbc.Col([
-                html.P('Backlog ERP'),
+                html.P('Backlog ERP', id='tt_backlog_erp'),
                 dcc.Loading(
                     children = [
                         dcc.Graph(id='kpi_backlog_erp',figure={})
@@ -98,7 +78,7 @@ layout = html.Div([
             ],class_name='grid_box'),
             #  Backlog EWM
             dbc.Col([
-                html.P('Backlog EWM'),
+                html.P('Backlog EWM', id='tt_backlog_ewm'),
                 dcc.Loading(
                     children = [
                         dcc.Graph(id='kpi_backlog_ewm',figure={})
@@ -108,7 +88,7 @@ layout = html.Div([
             ],class_name='grid_box'),
             # Ready for logistics
             dbc.Col([
-                html.P('Ready for Logistics'),
+                html.P('Ready for Logistics', id='tt_ready_logistics'),
                 dcc.Loading(
                     children = [
                         dcc.Graph(id='kpi_ready_logistics',figure={})
@@ -118,7 +98,7 @@ layout = html.Div([
             ],class_name='grid_box'),
             # In Logistics
             dbc.Col([
-                html.P('In Logistics'),
+                html.P('In Logistics', id='tt_IN_logistics'),
                 dcc.Loading(
                     children = [
                         dcc.Graph(id='kpi_IN_logistics',figure={})
@@ -128,7 +108,7 @@ layout = html.Div([
             ],class_name='grid_box'),
             # Sent today
             dbc.Col([
-                html.P('Sent today'),
+                html.P('Sent today', id='tt_sent_today'),
                 dcc.Loading(
                     children = [
                         dcc.Graph(id='kpi_sent_today',figure={})
@@ -136,11 +116,16 @@ layout = html.Div([
                     ,type='dot',color='#22594C'
                 )
             ],class_name='grid_box'),
-            
-        ]),
+        ]),        
+        dbc.Tooltip(target="tt_created_today",      placement='auto',  children ="Orders created today."),
+        dbc.Tooltip(target="tt_backlog_erp",        placement='auto',  children ="PTA clearance + Crossdock."),
+        dbc.Tooltip(target="tt_backlog_ewm",        placement='auto',  children ="Orders in EWM where commission has not yet started."),
+        dbc.Tooltip(target="tt_ready_logistics",    placement='auto',  children ="All orders ready for processing but not yet sent to WAMAS."),
+        dbc.Tooltip(target="tt_IN_logistics",       placement='auto',  children ="All orders started in WAMAS where PEK is not yet finished."),
+        dbc.Tooltip(target="tt_sent_today",         placement='auto',  children ="All orders where PEK was finished today."),
         dbc.Row([
             dbc.Col([
-                html.P('Created Before Today'),
+                html.P('Created Before Today', id='tt_created_before_today'),
                 dcc.Loading(
                     children = [
                         dcc.Graph(id='kpi_created_before_today',figure={})
@@ -149,7 +134,7 @@ layout = html.Div([
                 )
             ],class_name='grid_box'),
             dbc.Col([
-                html.P('In PTA aprroval'),
+                html.P('In PTA aprroval', id='tt_pta_clearance'),
                 dcc.Loading(
                     children = [
                         dcc.Graph(id='kpi_pta_clearance',figure={})
@@ -158,7 +143,7 @@ layout = html.Div([
                 )
             ],class_name='grid_box'),
             dbc.Col([
-                html.P('Crossdock starter'),
+                html.P('Crossdock starter', id='tt_crossdock_starter'),
                 dcc.Loading(
                     children = [
                         dcc.Graph(id='kpi_crossdock_starter',figure={})
@@ -170,10 +155,13 @@ layout = html.Div([
             dbc.Col(class_name='grid_box_empty'),
             dbc.Col(class_name='grid_box_empty'),
         ]),
+        dbc.Tooltip(target="tt_created_before_today",   placement='auto',  children ="Orders created yesterday and before."),
+        dbc.Tooltip(target="tt_pta_clearance",          placement='auto',  children ="Sum of all orders in PTA clearance."),
+        dbc.Tooltip(target="tt_crossdock_starter",      placement='auto',  children ="All orders which have CD Starter Flag."),
         dbc.Row([
             dbc.Col(class_name='grid_box_empty'),
             dbc.Col([
-                html.P('Back Order'),
+                html.P('Back Order', id='tt_backorder'),
                 dcc.Loading(
                     children = [
                         dcc.Graph(id='kpi_backorder',figure={})
@@ -182,7 +170,7 @@ layout = html.Div([
                 )
             ],class_name='grid_box'),
             dbc.Col([
-                html.P('Failed'),
+                html.P('Failed', id='tt_amount_failed'),
                 dcc.Loading(
                     children = [
                         dcc.Graph(id='kpi_amount_failed',figure={})
@@ -194,6 +182,8 @@ layout = html.Div([
             dbc.Col(class_name='grid_box_empty'),
             dbc.Col(class_name='grid_box_empty'),
         ]),
+        dbc.Tooltip(target="tt_backorder",      placement='auto',  children ="Orders waiting for goods in Crossdock."),
+        dbc.Tooltip(target="tt_amount_failed",  placement='auto',  children ="How many orders are in the failed wave."),
         dbc.Row([
             dbc.Col(class_name='grid_box_empty'),
             dbc.Col([
@@ -206,7 +196,7 @@ layout = html.Div([
                 )
             ],class_name='grid_box'),
             dbc.Col([
-                html.P('Ready for WAMAS'),
+                html.P('Ready for WAMAS', id='tt_ready_WAMAS'),
                 dcc.Loading(
                     children = [
                         dcc.Graph(id='kpi_ready_WAMAS',figure={})
@@ -218,6 +208,7 @@ layout = html.Div([
             dbc.Col(class_name='grid_box_empty'),
             dbc.Col(class_name='grid_box_empty'),
         ]),
+        dbc.Tooltip(target="tt_ready_WAMAS",  placement='auto',  children ="All orders ready to be transferred to WAMAS."),
         dbc.Row([
             dbc.Col(class_name='grid_box_empty'),
             dbc.Col([
@@ -269,7 +260,7 @@ layout = html.Div([
 )
 def update_open_orders(n_intervals):
 
-    df = execute_query('scripts/open_orders_created.sql')
+    df = wc.execute_query('scripts/open_orders_created.sql')
     kpi_open_orders = df[df['backlog_day_cat'] == 'Day 0'] # Today
     fig = wc.kpi_template(kpi_open_orders['open_orders'].sum())
     
@@ -293,7 +284,7 @@ def update_open_orders(n_intervals):
 )
 def update_backlog_EWM_logistics(n_intervals):
 
-    df = execute_query('scripts/backlog_EWM_logistics.sql')
+    df = wc.execute_query('scripts/backlog_EWM_logistics.sql')
 
     fig_in_logistics = wc.kpi_template(df['in_logistics'].sum())
     
@@ -318,7 +309,7 @@ def update_backlog_EWM_logistics(n_intervals):
     Input('load_interval','n_intervals')
 )
 def update_pta_clearance(n_intervals):
-    df = execute_query('scripts/pta_clearance.sql')
+    df = wc.execute_query('scripts/pta_clearance.sql')
     val_pta_clearance = df['pta_clearance'].sum()
     return [wc.kpi_template(val_pta_clearance),
         # store data
@@ -330,7 +321,7 @@ def update_pta_clearance(n_intervals):
     Input('load_interval','n_intervals')
 )
 def update_backorders(n_intervals):
-    df = execute_query('scripts/backorders.sql')
+    df = wc.execute_query('scripts/backorders.sql')
     return wc.kpi_template(df['backorder'].sum())
 
 @callback(
@@ -339,7 +330,7 @@ def update_backorders(n_intervals):
     Input('load_interval','n_intervals')
 )
 def update_amount_failed(n_intervals):
-    df = execute_query('scripts/amount_failed.sql')
+    df = wc.execute_query('scripts/amount_failed.sql')
     val_amount_failed = df['amount_failed'].sum()
     return [wc.kpi_template(val_amount_failed),
         # store data
@@ -361,3 +352,15 @@ def update_visual_store(backlogEWM_crossdock,amount_failed,pta_clearance):
     return [wc.kpi_template(val_ready_WAMAS)
         ,wc.kpi_template(val_backlog_ERP)
     ]
+
+
+@callback(
+    Output('kpi_data_asof','children'),
+    Input('load_interval','n_intervals')
+)
+def update_backorders(n_intervals):
+    df = wc.execute_query('scripts/data_asof.sql')
+    change_date = str(df['change'].min())
+    return 'Data as of: ' + change_date
+
+    

@@ -1,1 +1,1 @@
-from .base_components import kpi_template,open_order_chart
+from .base_components import kpi_template,open_order_chart, execute_query, hist_open_orders

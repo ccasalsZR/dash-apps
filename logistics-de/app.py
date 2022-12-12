@@ -4,18 +4,16 @@ import warnings
 warnings.filterwarnings("ignore")
 
 import dash
-# import dash_auth
+import dash_auth
 from dash import html, dcc # dash-html
 import dash_bootstrap_components as dbc
 
 import json
 
-import datetime
-
 from components import footer, navbar
 
 # Keep this out of source code repository - save in a file or a database
-# VALID_USERNAME_PASSWORD_PAIRS = json.loads(open('secrets/user_access.json', 'r').read())
+VALID_USERNAME_PASSWORD_PAIRS = json.loads(open('secrets/user_access.json', 'r').read())
 
 app = dash.Dash(__name__,
                 external_stylesheets=[dbc.themes.BOOTSTRAP],
@@ -26,10 +24,12 @@ app = dash.Dash(__name__,
                  )
 server = app.server
 
-# auth = dash_auth.BasicAuth(
-#    app,
-#     VALID_USERNAME_PASSWORD_PAIRS
-# )
+auth = dash_auth.BasicAuth(
+   app,
+    VALID_USERNAME_PASSWORD_PAIRS
+)
+
+
 
 # ------------------------------------------------------------------------------
 # App layout

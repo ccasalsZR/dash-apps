@@ -37,6 +37,12 @@ dash.register_page(
 
 
 layout = html.Div([
+    dcc.Interval(
+        id="load_interval", 
+        n_intervals=0, 
+        max_intervals=0, #<-- only run once
+        interval=1
+    ),
     dbc.Container([
         dbc.Row([
             dbc.Col([
@@ -69,14 +75,31 @@ layout = html.Div([
             ],class_name='grid_box'),
             dbc.Col([
                 html.A([
-                    html.P('Backlog xyz orders')
+                    html.P('Backlog orders', id='tt_backlog_orders')
                     ],href='/backlog-monitor'
+                ),
+                dcc.Loading(
+                    children = [
+                        dcc.Graph(id='kpi_open_orders_today',figure={})
+                    ]
+                    ,type='dot',color='#22594C'
+                ),
+                dcc.Loading(
+                    children = [
+                        dcc.Graph(id='chart_hist_open_orders',figure={})
+                    ]
+                    ,type='dot',color='#22594C'
                 )
             ],class_name='grid_box'),
             dbc.Col([
                 html.P('Retention Rate')
             ],class_name='grid_box'),
         ]),
+        dbc.Tooltip(
+            "The number of total open orders.",
+            target="tt_backlog_orders",
+            placement='auto',
+        ),
 
          # Row 2
         dbc.Row([
@@ -172,3 +195,21 @@ layout = html.Div([
         ]),
     ]),
 ])
+
+
+@callback(
+    Output('kpi_open_orders_today','figure'),
+    Output('chart_hist_open_orders','figure'),
+
+    Input('load_interval','n_intervals')
+)
+def update_open_orders(n_intervals):
+
+    df = wc.execute_query('scripts/open_orders_created.sql')
+    # kpi_open_orders = df[df['backlog_day_cat'] == 'Day 0'] # Today
+    fig_kpi = wc.kpi_template(df['open_orders'].sum())
+
+    df = wc.execute_query('scripts/hist_open_orders.sql')
+    fig_chart = wc.hist_open_orders(df)
+        
+    return fig_kpi, fig_chart
